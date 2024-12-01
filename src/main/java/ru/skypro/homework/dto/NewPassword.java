@@ -4,6 +4,9 @@ import ru.skypro.homework.exception.NewPasswordException;
 
 public class NewPassword {
 
+    private int passwordMinimalLength = 8;
+    private int passwordMaximalLength = 16;
+
     private String currentPassword;
     private String newPassword;
 
@@ -15,7 +18,7 @@ public class NewPassword {
     }
 
     public void setCurrentPassword(String currentPassword) throws NewPasswordException {
-        if (currentPassword.length() >= 8 && currentPassword.length() <=16) {
+        if (currentPassword.length() >= passwordMinimalLength && currentPassword.length() <= passwordMaximalLength) {
             this.currentPassword = currentPassword;
         } else {
             throw new NewPasswordException("current password length");
@@ -27,7 +30,7 @@ public class NewPassword {
     }
 
     public void setNewPassword(String newPassword) throws NewPasswordException {
-        if (newPassword.length() >= 8 && newPassword.length() <= 16) {
+        if (newPassword.length() >= passwordMinimalLength && newPassword.length() <= passwordMaximalLength) {
             this.newPassword = newPassword;
         } else {
             throw new NewPasswordException("new password length");
