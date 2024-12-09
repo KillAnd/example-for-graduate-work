@@ -33,6 +33,7 @@ public class NewPassword {
         if (newPassword.length() >= passwordMinimalLength && newPassword.length() <= passwordMaximalLength) {
             this.newPassword = newPassword;
         } else {
+
             throw new NewPasswordException("new password length");
         }
     }
