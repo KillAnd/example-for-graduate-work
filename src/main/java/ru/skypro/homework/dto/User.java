@@ -1,22 +1,25 @@
 package ru.skypro.homework.dto;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 public class User {
-
+@Id
+@GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String email;
     private String firstName;
     private String lastName;
     private String phone;
     private Role role;
-    private String image;
+    @Lob
+    private byte[] image;
+    private String password;
 
     public User() {
     }
 
-    public User(int id, String email, String firstName, String lastName, String phone, Role role, String image) {
+    public User(int id, String email, String firstName, String lastName, String phone, Role role, byte[] image) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -74,11 +77,19 @@ public class User {
         this.role = role;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
