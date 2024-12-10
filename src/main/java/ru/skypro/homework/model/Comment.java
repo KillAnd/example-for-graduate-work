@@ -1,4 +1,6 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.model;
+
+import ru.skypro.homework.model.Ad;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
