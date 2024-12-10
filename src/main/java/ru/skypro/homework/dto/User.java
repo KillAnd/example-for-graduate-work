@@ -1,10 +1,16 @@
 package ru.skypro.homework.dto;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class User {
 
+    @Id
+    @GeneratedValue
     private int id;
     private String email;
     private String firstName;
@@ -12,6 +18,9 @@ public class User {
     private String phone;
     private Role role;
     private String image;
+
+    @OneToMany(mappedBy = "author")
+    private List<Ad> ads;
 
     public User() {
     }
