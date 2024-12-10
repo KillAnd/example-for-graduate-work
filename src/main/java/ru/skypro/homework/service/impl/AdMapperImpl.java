@@ -1,10 +1,10 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Component;
-import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.AdsMapper;
 import ru.skypro.homework.service.ExtendedAdMapper;
 
