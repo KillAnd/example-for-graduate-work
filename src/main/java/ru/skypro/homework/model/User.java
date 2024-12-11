@@ -1,6 +1,13 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.model;
+
+import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class User {
@@ -15,6 +22,9 @@ public class User {
     @Lob
     private byte[] image;
     private String password;
+
+    @OneToMany(mappedBy = "author")
+    private List<Ad> ads;
 
     public User() {
     }

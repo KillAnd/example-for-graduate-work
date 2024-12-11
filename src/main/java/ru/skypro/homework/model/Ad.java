@@ -1,14 +1,23 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.model;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Ad {
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private int author;
     private String image;
+    @Id
+    @GeneratedValue
     private int pk;
     private int price;
     private String title;
+    private String description;
+
+    @OneToMany(mappedBy = "ad")
+    private List<Comment> comments;
 
     public Ad() {
     }
@@ -59,5 +68,13 @@ public class Ad {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

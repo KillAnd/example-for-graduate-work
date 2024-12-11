@@ -1,4 +1,5 @@
 package ru.skypro.homework.dto;
+import ru.skypro.homework.model.Ad;
 
 public class Ads {
 

@@ -1,6 +1,11 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.model;
+
+import ru.skypro.homework.model.Ad;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Comment {
@@ -8,8 +13,13 @@ public class Comment {
     private String authorImage;
     private String authorFirstName;
     private long createdAt;
+    @Id
+    @GeneratedValue
     private int pk;
     private String text;
+
+    @ManyToOne
+    private Ad ad;
 
     public Comment() {
     }
