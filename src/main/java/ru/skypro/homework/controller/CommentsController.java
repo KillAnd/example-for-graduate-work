@@ -21,25 +21,25 @@ public class CommentsController {
         this.commentService = commentService;
     }
 
-    @GetMapping("/{id}/comments")
-    public ResponseEntity <List<Comment>> getComments(@PathVariable("id") Integer id) {
-        List<Comment> comments = commentService.getCommentsByAdId(id);
+    @GetMapping("/{id}/comments")  // получение комментариев объявления
+    public ResponseEntity <List<Comment>> getComments(@PathVariable("adId") Integer adId) {
+        List<Comment> comments = commentService.getCommentsByAdId(adId);
         return ResponseEntity.ok(comments);
     }
 
-    @PostMapping("/{id}/comments")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") Integer id, @RequestBody CreateOrUpdateComment createComment) {
-        Comment newComment = commentService.addComment(id, createComment);
+    @PostMapping("/{id}/comments")  // добавление комментариев к объявлению
+    public ResponseEntity<Comment> addComment(@PathVariable("adId") Integer adId, @RequestBody CreateOrUpdateComment createComment) {
+        Comment newComment = commentService.addComment(adId, createComment);
         return ResponseEntity.ok(newComment);
     }
 
-    @DeleteMapping("{adId}/comments/{commentId}")
+    @DeleteMapping("{adId}/comments/{commentId}") // удаление комментария
     public ResponseEntity<Void> deleteComment(@PathVariable("adId") int adId, @PathVariable("commentId") Integer commentId) {
         commentService.deleteComment(adId, commentId);
         return ResponseEntity.ok().build();
 
     }
-    @PatchMapping("{adId}/comments/{commentId}")
+    @PatchMapping("{adId}/comments/{commentId}") // обновление комментария
     public ResponseEntity<Comment> updateComment(@PathVariable("adId") int adId,
                                               @PathVariable("commentId") int commentId,
                                               @RequestBody CreateOrUpdateComment updateRequest) {
