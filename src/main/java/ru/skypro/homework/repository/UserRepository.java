@@ -5,5 +5,6 @@ import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Ads getAllUserAds(long id);
 }

@@ -5,5 +5,6 @@ import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 
 public interface AdRepository extends JpaRepository<Ad, Long> {
+
     Ads getAllAds();
 }

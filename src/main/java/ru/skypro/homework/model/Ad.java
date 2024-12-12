@@ -5,6 +5,7 @@ import java.util.List;
 
 @Entity
 public class Ad {
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private int author;

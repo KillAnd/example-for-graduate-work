@@ -8,6 +8,7 @@ import ru.skypro.homework.model.User;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ExtendedAdMapper {
+
     ExtendedAd mapToExtendedAd(User user, Ad ad);
     Ad mapFromExtendedAd(ExtendedAd extendedAd);
 }

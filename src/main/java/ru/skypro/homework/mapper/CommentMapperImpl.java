@@ -10,6 +10,7 @@ import java.util.List;
 
 @Component
 public class CommentMapperImpl implements CommentsMapper, CreateOrUpdateCommentMapper{
+
     @Override
     public Comments mapToComments(List<Comment> comments) {
         Comments dto = new Comments();
