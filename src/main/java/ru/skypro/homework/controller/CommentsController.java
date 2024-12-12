@@ -3,7 +3,8 @@ package ru.skypro.homework.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.Comment;
+import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.service.CommentService;
 
@@ -22,14 +23,14 @@ public class CommentsController {
     }
 
     @GetMapping("/{id}/comments")  // получение комментариев объявления
-    public ResponseEntity <List<Comment>> getComments(@PathVariable("adId") Integer adId) {
-        List<Comment> comments = commentService.getCommentsByAdId(adId);
+    public ResponseEntity <Comments> getComments(@PathVariable("id") int id) {
+        Comments comments = commentService.getCommentsById(id);
         return ResponseEntity.ok(comments);
     }
 
     @PostMapping("/{id}/comments")  // добавление комментариев к объявлению
-    public ResponseEntity<Comment> addComment(@PathVariable("adId") Integer adId, @RequestBody CreateOrUpdateComment createComment) {
-        Comment newComment = commentService.addComment(adId, createComment);
+    public ResponseEntity<Comment> addComment(@PathVariable("id") Integer id, @RequestBody CreateOrUpdateComment createComment) {
+        Comment newComment = commentService.addComment(id, createComment);
         return ResponseEntity.ok(newComment);
     }
 
