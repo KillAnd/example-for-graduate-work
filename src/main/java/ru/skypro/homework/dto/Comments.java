@@ -1,5 +1,7 @@
 package ru.skypro.homework.dto;
 
+import ru.skypro.homework.model.Comment;
+
 public class Comments {
 
     private int count;

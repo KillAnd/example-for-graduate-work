@@ -1,18 +1,24 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.Comment;
+import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
+
+    @Autowired
+    private CommentRepository commentRepository;
     @Override
     public List<Comment> getCommentsById(Integer id) {
-        return commentRepository.findById(id);
+        return commentRepository.findById(id).stream().collect(Collectors.toList());
     }
 
     @Override

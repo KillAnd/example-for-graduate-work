@@ -7,10 +7,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.AuthService;
+import ru.skypro.homework.service.UserService;
 
 import java.util.Arrays;
 import java.util.function.Predicate;

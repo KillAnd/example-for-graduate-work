@@ -5,9 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.exception.NewPasswordException;
 import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserById(String id) {
-        return userRepository.findById();
+        return userRepository.findById(Long.valueOf(id)).get();
     }
 
     @Override

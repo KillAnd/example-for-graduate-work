@@ -1,19 +1,18 @@
-package ru.skypro.homework.service.impl;
+package ru.skypro.homework.mapper;
 
 import org.springframework.stereotype.Component;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.model.User;
-import ru.skypro.homework.service.AdsMapper;
-import ru.skypro.homework.service.ExtendedAdMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class AdMapperImpl implements AdsMapper, ExtendedAdMapper {
+public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdateAdMapper {
     @Override
     public Ads mapToAds(List<Ad> ads) {
         Ads dto = new Ads();
@@ -24,7 +23,7 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper {
 
     @Override
     public List<Ad> mapFromAds(Ads ads) {
-        return new ArrayList<>(Arrays.asList(ads.getResults()));
+        return Arrays.asList(ads.getResults());
     }
 
     @Override
@@ -50,6 +49,24 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper {
         ad.setPrice(extendedAd.getPrice());
         ad.setDescription(extendedAd.getDescription());
         ad.setImage(extendedAd.getImage());
+        return ad;
+    }
+
+    @Override
+    public CreateOrUpdateAd mapToCreateOrUpdateAd(Ad ad) {
+        CreateOrUpdateAd dto = new CreateOrUpdateAd();
+        dto.setTitle(ad.getTitle());
+        dto.setPrice(ad.getPrice());
+        dto.setDescription(ad.getDescription());
+        return dto;
+    }
+
+    @Override
+    public Ad mapFromCreateOrUpdateAd(CreateOrUpdateAd dto) {
+        Ad ad = new Ad();
+        ad.setTitle(dto.getTitle());
+        ad.setDescription(dto.getDescription());
+        ad.setPrice(dto.getPrice());
         return ad;
     }
 }
