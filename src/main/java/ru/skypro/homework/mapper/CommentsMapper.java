@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface CommentsMapper {
+
     Comments mapToComments(List<Comment> comments);
     List<Comment> mapFromComments(Comments comments);
 }

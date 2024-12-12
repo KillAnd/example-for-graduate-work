@@ -6,6 +6,7 @@ import ru.skypro.homework.model.User;
 
 @Component
 public class UserMapperImpl implements UpdateUserMapper {
+
     @Override
     public UpdateUser mapToUpdateUser(User user) {
         UpdateUser dto = new UpdateUser();

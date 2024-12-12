@@ -6,6 +6,7 @@ import ru.skypro.homework.model.User;
 
 @Mapper
 public interface UpdateUserMapper {
+
     UpdateUser mapToUpdateUser(User user);
     User mapFromUpdateUser(UpdateUser dto);
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 @Component
 public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdateAdMapper {
+
     @Override
     public Ads mapToAds(List<Ad> ads) {
         Ads dto = new Ads();

@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Comment {
+
     private int author;
     private String authorImage;
     private String authorFirstName;
