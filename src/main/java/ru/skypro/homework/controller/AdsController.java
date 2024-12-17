@@ -7,9 +7,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.model.User;
+import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
@@ -40,18 +43,18 @@ public class AdsController {
 
     //Добавление объявления
     @PostMapping()
-    public ResponseEntity<Object> createAd(@RequestBody Ad ad, @RequestBody String image) {
+    public ResponseEntity<Object> createAd(@RequestBody CreateOrUpdateAd ad, @RequestBody String image) {
         User user = userService.findUserById(currentUserId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } else {
-            return ResponseEntity.ok(adsService.createAd());
+            return ResponseEntity.ok(adsService.createAd(ad));
         }
     }
 
     //Получение информации об объявлении
     @GetMapping("/{id}")
-    public ResponseEntity<Ad> getAd(@PathVariable long id) {
+    public ResponseEntity<ExtendedAd> getAd(@PathVariable int id) {
         User user = userService.findUserById(currentUserId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -59,22 +62,22 @@ public class AdsController {
         if (id == 0) { // тут надо будет вставить запрос на поиск такого id в базе (или в сервисном методе эту проверку делать)
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(adsService.getAd(id));
+        return ResponseEntity.ok(adsService.getAd(user, id));
     }
 
     //Удаление объявления
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteAd(@PathVariable long id) {
+    public ResponseEntity<Object> deleteAd(@PathVariable int id) {
         User user = new User();
         // поиск объявления
-        ResponseEntity<Ad> ad = getAd(id);
+        ExtendedAd ad = adsService.getAd(user, id);
         // проверка, является ли пользователь админом
         if (user.getRole() == ADMIN) {
             adsService.deleteAd(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else { // ищем объявление среди объявлений пользователя
-            Ads ads = adsService.getMyAds();
-            if (!ads.getResults.contains(ad)) {
+            Ads ads = adsService.getMyAds(currentUserId);
+            if (!ads.getResults().contains(ad)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             } else {
                 adsService.deleteAd(id);
@@ -86,21 +89,21 @@ public class AdsController {
 
     //Обновление информации об объявлении
     @PatchMapping("/{id}")
-    public ResponseEntity<Ad> updateAd(@PathVariable long id, @RequestBody Ad newAd,
+    public ResponseEntity<CreateOrUpdateAd> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                        @AuthenticationPrincipal User user) {
         // Получение объявления, которое необходимо обновить
-        ResponseEntity<Ad> oldAdResponse = getAd(id);
+        ResponseEntity<ExtendedAd> oldAdResponse = getAd(id);
 
         // Проверка, существует ли объявление
         if (oldAdResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Ad oldAd = oldAdResponse.getBody();
+        ExtendedAd oldAd = oldAdResponse.getBody();
 
         // Проверка, является ли пользователь админом или владельцем объявления
         if (user.getRole() == ADMIN || adsService.isUserOwnerOfAd(user.getId(), oldAd)) {
-            Ad updatedAd = adsService.updateAd(id, newAd);
+            CreateOrUpdateAd updatedAd = adsService.updateAd(id, newAd);
             return ResponseEntity.ok(updatedAd);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
