@@ -1,10 +1,12 @@
 package ru.skypro.homework.dto;
 import ru.skypro.homework.model.Ad;
 
+import java.util.List;
+
 public class Ads {
 
     private int count;
-    private Ad[] results;
+    private List<Ad> results;
 
     public Ads() {
     }
@@ -17,11 +19,11 @@ public class Ads {
         this.count = count;
     }
 
-    public Ad[] getResults() {
+    public List<Ad> getResults() {
         return results;
     }
 
-    public void setResults(Ad[] results) {
+    public void setResults(List<Ad> results) {
         this.results = results;
     }
 }

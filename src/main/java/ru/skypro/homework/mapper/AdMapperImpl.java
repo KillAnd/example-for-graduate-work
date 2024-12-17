@@ -17,13 +17,13 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdat
     public Ads mapToAds(List<Ad> ads) {
         Ads dto = new Ads();
         dto.setCount(ads.size());
-        dto.setResults(ads.toArray(new Ad[0]));
+        dto.setResults(ads);
         return dto;
     }
 
     @Override
     public List<Ad> mapFromAds(Ads ads) {
-        return Arrays.asList(ads.getResults());
+        return ads.getResults();
     }
 
     @Override
