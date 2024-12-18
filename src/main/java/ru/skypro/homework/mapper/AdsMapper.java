@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface AdsMapper {
+
     Ads mapToAds(List<Ad> ads);
     List<Ad> mapFromAds(Ads ads);
 }

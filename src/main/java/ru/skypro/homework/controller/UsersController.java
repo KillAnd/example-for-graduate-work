@@ -11,10 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.model.Image;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.exception.NewPasswordException;
 import ru.skypro.homework.exception.UnauthorizedException;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +27,8 @@ public class UsersController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ImageService imageService;
 
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPassword newPassword) {
@@ -38,16 +45,16 @@ public class UsersController {
         }
     }
     @GetMapping("/me")
-    public ResponseEntity<User> getUser() {
+    public ResponseEntity<Optional<User>> getUser() {
         // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
 
         // Вызов сервиса для получения данных пользователя
-        User user = userService.findUserById(currentUserEmail);
+        Optional<User> user = userService.findUserByEmail(currentUserEmail);
 
         // Проверка, что пользователь найден
-        if (user == null) {
+        if (user.isEmpty()) {
             throw new UnauthorizedException("User not found");
         }
 
@@ -68,22 +75,23 @@ public class UsersController {
     }
 
     @PatchMapping("/me/image")
-    public ResponseEntity<byte[]> updateUserImage(@RequestParam("image") MultipartFile image) {
-        // Получение текущего пользователя из контекста безопасности
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+    public ResponseEntity<String> updateUserImage(@RequestParam("image") MultipartFile image) {
+        try {
+            // Получение текущего пользователя из контекста безопасности
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserEmail = authentication.getName();
 
-        // Вызов сервиса для получения данных пользователя
-        User user = userService.findUserById(currentUserEmail);
+            // Вызов сервиса для обновления изображения пользователя
+            userService.updateUserImage(currentUserEmail, image);
 
-        // Проверка, что пользователь найден и у него есть изображение
-        if (user == null || user.getImage() == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // Возвращаем успешный ответ
+            return ResponseEntity.ok("Image updated successfully");
+        } catch (UserNotFoundException e) {
+            // Обработка случая, если пользователь не найден
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            // Обработка других ошибок
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update image");
         }
-
-        // Возврат изображения в виде бинарных данных
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        return new ResponseEntity<>(user.getImage(), headers, HttpStatus.OK);
     }
 }
