@@ -6,16 +6,17 @@ import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.model.User;
 
 import java.awt.*;
+import java.util.Optional;
 
 public interface UserService {
 
 
-    boolean checkCurrentPassword(String email, String currentPassword)
+    boolean checkCurrentPassword(String email, String currentPassword);
     void updatePassword(String email, NewPassword newPassword);
 
-    User findUserByEmail(String email);
+    Optional<User> findUserByEmail(String email);
 
-    User findUserById(String id);
+    Optional<User> findUserById(Long id);
 
     User updateUser(String email, UpdateUser updateUser);
     void updateUserImage(String email, MultipartFile image);

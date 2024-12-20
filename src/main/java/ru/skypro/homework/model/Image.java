@@ -6,6 +6,7 @@ import java.util.Objects;
 
 @Entity
 public class Image {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
