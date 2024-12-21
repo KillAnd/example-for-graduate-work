@@ -1,6 +1,9 @@
 package ru.skypro.homework.model;
 
+import ru.skypro.homework.dto.ImageDTO;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -9,7 +12,12 @@ public class Ad {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private int author;
-    private String image;
+    @OneToMany(mappedBy = "ad")
+    private ImageDTO image;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     @Id
     @GeneratedValue
     private int pk;
@@ -23,12 +31,15 @@ public class Ad {
     public Ad() {
     }
 
-    public Ad(int author, String image, int pk, int price, String title) {
+    public Ad(int author, ImageDTO image, User user, int pk, int price, String title, String description, List<Comment> comments) {
         this.author = author;
         this.image = image;
+        this.user = user;
         this.pk = pk;
         this.price = price;
         this.title = title;
+        this.description = description;
+        this.comments = comments;
     }
 
     public int getAuthor() {
@@ -39,11 +50,11 @@ public class Ad {
         this.author = author;
     }
 
-    public String getImage() {
+    public ImageDTO getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(ImageDTO image) {
         this.image = image;
     }
 
@@ -77,5 +88,21 @@ public class Ad {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

@@ -1,5 +1,7 @@
 package ru.skypro.homework.dto;
 
+import ru.skypro.homework.model.Image;
+
 public class ExtendedAd {
 
     private int pk;
@@ -7,7 +9,7 @@ public class ExtendedAd {
     private String authorLastName;
     private String description;
     private String email;
-    private String image;
+    private Image image;
     private String phone;
     private int price;
     private String title;
@@ -55,11 +57,11 @@ public class ExtendedAd {
         this.email = email;
     }
 
-    public String getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 

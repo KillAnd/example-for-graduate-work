@@ -1,7 +1,10 @@
 package ru.skypro.homework.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.model.User;
@@ -17,6 +21,7 @@ import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static ru.skypro.homework.dto.Role.ADMIN;
@@ -27,12 +32,13 @@ public class AdsController {
 
     private final AdsService adsService;
     private final AuthService authService;
-    private UserService userService;
+    private final UserService userService;
 
 
-    public AdsController(AdsService adsService, AuthService authService) {
+    public AdsController(AdsService adsService, AuthService authService, UserService userService) {
         this.adsService = adsService;
         this.authService = authService;
+        this.userService = userService;
     }
 
     //Получение всех объявлений
@@ -42,27 +48,29 @@ public class AdsController {
     }
 
     //Добавление объявления
-    @PostMapping()
-    public ResponseEntity<Object> createAd(@RequestBody CreateOrUpdateAd ad, @RequestBody String image) {
-        User user = userService.findUserById(currentUserId);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreateOrUpdateAd> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
+                                    @RequestPart("image") MultipartFile image,
+                                    @AuthenticationPrincipal User user) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else {
-            return ResponseEntity.ok(adsService.createAd(ad));
         }
+
+        CreateOrUpdateAd createdAd = adsService.createAd(ad, image);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdAd);
     }
 
     //Получение информации об объявлении
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAd(@PathVariable int id) {
-        User user = userService.findUserById(currentUserId);
-        if (user == null) {
+    public ResponseEntity<ExtendedAd> getAd(@PathVariable Integer id) {
+        Optional<User> user = userService.findUserById(id.longValue());
+        if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (id == 0) { // тут надо будет вставить запрос на поиск такого id в базе (или в сервисном методе эту проверку делать)
+        if (id == user.get().getId()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(adsService.getAd(user, id));
+        return ResponseEntity.ok(adsService.getAd(user.get(), id));
     }
 
     //Удаление объявления
@@ -76,7 +84,7 @@ public class AdsController {
             adsService.deleteAd(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else { // ищем объявление среди объявлений пользователя
-            Ads ads = adsService.getMyAds(currentUserId);
+            Ads ads = adsService.getMyAds(id);
             if (!ads.getResults().contains(ad)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             } else {
@@ -110,22 +118,34 @@ public class AdsController {
         }
     }
 
-    //Получение объявлений авторизованного пользователя
+    // Получение объявлений авторизованного пользователя
     @GetMapping("/me")
-    public ResponseEntity<Object> getUserAds() {
-        User user = userService.findUserById(currentUserId);
-        // Проверка, что пользователь найден
+    public ResponseEntity<Object> getUserAds(@AuthenticationPrincipal User user) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } else {
-            return ResponseEntity.ok(adsService.getMyAds());
+            return ResponseEntity.ok(adsService.getMyAds(user.getId()));
         }
     }
 
-    //Обновление картинки объявления
-    @PatchMapping("/ads/{id}/image")
-    public ResponseEntity<Void> updateAdImage(@PathVariable long id, @RequestParam("image") MultipartFile image) {
-        adsService.updateAdImage(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    // Обновление картинки объявления
+    @PatchMapping("/{id}/image")
+    public ResponseEntity<Void> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image,
+                                              @AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        ExtendedAd ad = adsService.getAd(user, id);
+        if (ad != null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        if (user.getRole() == Role.ADMIN || ad.getEmail().equals(user.getEmail())) {
+            adsService.updateAdImage(id, image);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }

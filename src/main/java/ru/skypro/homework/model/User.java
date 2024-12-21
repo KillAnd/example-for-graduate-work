@@ -1,5 +1,6 @@
 package ru.skypro.homework.model;
 
+import ru.skypro.homework.dto.ImageDTO;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,8 +22,8 @@ public class User {
     private String lastName;
     private String phone;
     private Role role;
-    @Lob
-    private byte[] image;
+    @OneToMany(mappedBy = "user")
+    private ImageDTO image;
     private String password;
 
     @OneToMany(mappedBy = "author")
@@ -30,7 +32,7 @@ public class User {
     public User() {
     }
 
-    public User(int id, String email, String firstName, String lastName, String phone, Role role, byte[] image) {
+    public User(int id, String email, String firstName, String lastName, String phone, Role role, ImageDTO image) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -88,11 +90,11 @@ public class User {
         this.role = role;
     }
 
-    public byte[] getImage() {
+    public ImageDTO getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(ImageDTO image) {
         this.image = image;
     }
 

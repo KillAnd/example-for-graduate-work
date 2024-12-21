@@ -14,19 +14,25 @@ public class Image {
     private long fileSize;
     private String mediaType;
     private byte[] data;
-    @OneToOne
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; // Связь с пользователем
+
+    @ManyToOne
+    @JoinColumn(name = "ad_id")
+    private Ad ad; // Связь с объявлением
 
     public Image() {
     }
 
-    public Image(long id, String filePath, long fileSize, String mediaType, byte[] data, User user) {
+    public Image(long id, String filePath, long fileSize, String mediaType, byte[] data, User user, Ad ad) {
         this.id = id;
         this.filePath = filePath;
         this.fileSize = fileSize;
         this.mediaType = mediaType;
         this.data = data;
         this.user = user;
+        this.ad = ad;
     }
 
     public long getId() {
@@ -77,17 +83,25 @@ public class Image {
         this.user = user;
     }
 
+    public Ad getAd() {
+        return ad;
+    }
+
+    public void setAd(Ad ad) {
+        this.ad = ad;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Image image = (Image) o;
-        return id == image.id && fileSize == image.fileSize && Objects.equals(filePath, image.filePath) && Objects.equals(mediaType, image.mediaType) && Arrays.equals(data, image.data) && Objects.equals(user, image.user);
+        return id == image.id && fileSize == image.fileSize && Objects.equals(filePath, image.filePath) && Objects.equals(mediaType, image.mediaType) && Arrays.equals(data, image.data) && Objects.equals(user, image.user) && Objects.equals(ad, image.ad);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, filePath, fileSize, mediaType, user);
+        int result = Objects.hash(id, filePath, fileSize, mediaType, user, ad);
         result = 31 * result + Arrays.hashCode(data);
         return result;
     }
@@ -101,6 +115,7 @@ public class Image {
                 ", mediaType='" + mediaType + '\'' +
                 ", data=" + Arrays.toString(data) +
                 ", user=" + user +
+                ", ad=" + ad +
                 '}';
     }
 }
