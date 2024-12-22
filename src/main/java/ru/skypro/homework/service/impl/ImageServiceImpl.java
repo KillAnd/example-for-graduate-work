@@ -23,7 +23,6 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-
     private final int BUFFER_SIZE = 1024;
     @Autowired
     private UserRepository userRepository;

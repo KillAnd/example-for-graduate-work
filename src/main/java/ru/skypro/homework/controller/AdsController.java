@@ -20,6 +20,7 @@ import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -131,7 +132,7 @@ public class AdsController {
     // Обновление картинки объявления
     @PatchMapping("/{id}/image")
     public ResponseEntity<Void> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image,
-                                              @AuthenticationPrincipal User user) {
+                                              @AuthenticationPrincipal User user) throws IOException {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

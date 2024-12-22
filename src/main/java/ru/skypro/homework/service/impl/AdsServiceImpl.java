@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class AdsServiceImpl implements AdsService {
+
     private final AdRepository adRepository;
 
     private final AdMapperImpl adMapper;
@@ -43,6 +45,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToExtendedAd(user, adRepository.findById(id).get());
     }
 
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Override
     public void deleteAd(int id) {
         adRepository.deleteById(id);
@@ -53,6 +56,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToAds(adRepository.findAdsByAuthor(currentUserId));
     }
 
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Override
     public CreateOrUpdateAd updateAd(int id, CreateOrUpdateAd newAd) {
         Ad ad = adMapper.mapFromCreateOrUpdateAd(newAd);
@@ -60,6 +64,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToCreateOrUpdateAd(adRepository.save(ad));
     }
 
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Override
     public void updateAdImage(Integer id, MultipartFile image) throws IOException {
         {

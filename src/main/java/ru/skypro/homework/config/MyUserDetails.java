@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class MyUserDetails implements UserDetails {
+
     private final User user;
 
     public MyUserDetails(User user) {
