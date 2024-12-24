@@ -1,6 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
@@ -80,7 +79,7 @@ public class AdsServiceImpl implements AdsService {
             ImageDTO imagePath = imageService.uploadAdImage(id, image);
 
             // Обновить ссылку на изображение в объявлении
-            ad.setImage(imagePath);
+            ad.setImageAd(imagePath);
 
             // Сохранить обновленное объявление в базе данных
             adRepository.save(ad);

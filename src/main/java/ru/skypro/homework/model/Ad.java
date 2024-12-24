@@ -3,7 +3,6 @@ package ru.skypro.homework.model;
 import ru.skypro.homework.dto.ImageDTO;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,7 +12,7 @@ public class Ad {
     @JoinColumn(name = "user_id")
     private int author;
     @OneToMany(mappedBy = "ad")
-    private ImageDTO image;
+    private ImageDTO imageAd;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -31,9 +30,9 @@ public class Ad {
     public Ad() {
     }
 
-    public Ad(int author, ImageDTO image, User user, int pk, int price, String title, String description, List<Comment> comments) {
+    public Ad(int author, ImageDTO imageAd, User user, int pk, int price, String title, String description, List<Comment> comments) {
         this.author = author;
-        this.image = image;
+        this.imageAd = imageAd;
         this.user = user;
         this.pk = pk;
         this.price = price;
@@ -50,12 +49,12 @@ public class Ad {
         this.author = author;
     }
 
-    public ImageDTO getImage() {
-        return image;
+    public ImageDTO getImageAd() {
+        return imageAd;
     }
 
-    public void setImage(ImageDTO image) {
-        this.image = image;
+    public void setImageAd(ImageDTO imageAd) {
+        this.imageAd = imageAd;
     }
 
     public int getPk() {

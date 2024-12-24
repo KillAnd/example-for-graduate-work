@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +22,7 @@ public class User {
     private String phone;
     private Role role;
     @OneToMany(mappedBy = "user")
-    private ImageDTO image;
+    private ImageDTO imageUser;
     private String password;
 
     @OneToMany(mappedBy = "author")
@@ -32,14 +31,14 @@ public class User {
     public User() {
     }
 
-    public User(int id, String email, String firstName, String lastName, String phone, Role role, ImageDTO image) {
+    public User(int id, String email, String firstName, String lastName, String phone, Role role, ImageDTO imageUser) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.role = role;
-        this.image = image;
+        this.imageUser = imageUser;
     }
 
     public int getId() {
@@ -90,12 +89,12 @@ public class User {
         this.role = role;
     }
 
-    public ImageDTO getImage() {
-        return image;
+    public ImageDTO getImageUser() {
+        return imageUser;
     }
 
-    public void setImage(ImageDTO image) {
-        this.image = image;
+    public void setImageUser(ImageDTO imageUser) {
+        this.imageUser = imageUser;
     }
 
     public String getPassword() {
