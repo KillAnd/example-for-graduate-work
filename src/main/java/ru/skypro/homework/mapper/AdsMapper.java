@@ -10,8 +10,13 @@ import java.util.List;
 @Mapper
 public interface AdsMapper {
 
-    @Mapping(source = "ads", target = "results")
-    Ads mapToAds(List<Ad> ads);
-    @Mapping(source = "results", target = "ads")
-    List<Ad> mapFromAds(Ads ads);
+    default Ads mapToAds(List<Ad> ads) {
+        Ads result = new Ads();
+        result.setResults(ads);
+        return result;
+    }
+
+    default List<Ad> mapFromAds(Ads ads) {
+        return ads.getResults();
+    }
 }

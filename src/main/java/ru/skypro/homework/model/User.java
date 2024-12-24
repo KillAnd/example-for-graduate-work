@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class User {
@@ -21,17 +23,18 @@ public class User {
     private String lastName;
     private String phone;
     private Role role;
-    @OneToMany(mappedBy = "user")
-    private ImageDTO imageUser;
+    @OneToOne(mappedBy = "user")
+    private Image imageUser;
     private String password;
 
     @OneToMany(mappedBy = "author")
-    private List<Ad> ads;
+    private List<Ad> ads = new ArrayList<>();
 
     public User() {
     }
 
-    public User(int id, String email, String firstName, String lastName, String phone, Role role, ImageDTO imageUser) {
+    public User(int id, String email, String firstName, String lastName, String phone,
+                Role role, Image imageUser, String password, List<Ad> ads) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -39,6 +42,8 @@ public class User {
         this.phone = phone;
         this.role = role;
         this.imageUser = imageUser;
+        this.password = password;
+        this.ads = ads;
     }
 
     public int getId() {
@@ -89,11 +94,11 @@ public class User {
         this.role = role;
     }
 
-    public ImageDTO getImageUser() {
+    public Image getImageUser() {
         return imageUser;
     }
 
-    public void setImageUser(ImageDTO imageUser) {
+    public void setImageUser(Image imageUser) {
         this.imageUser = imageUser;
     }
 
@@ -103,5 +108,41 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Ad> getAds() {
+        return ads;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(phone, user.phone) && role == user.role && Objects.equals(imageUser, user.imageUser) && Objects.equals(password, user.password) && Objects.equals(ads, user.ads);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, firstName, lastName, phone, role, imageUser, password, ads);
+    }
+
+    public void setAds(List<Ad> ads) {
+        this.ads = ads;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", role=" + role +
+                ", imageUser=" + imageUser +
+                ", password='" + password + '\'' +
+                ", ads=" + ads +
+                '}';
     }
 }

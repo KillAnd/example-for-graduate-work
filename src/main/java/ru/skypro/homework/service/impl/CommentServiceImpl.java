@@ -1,7 +1,6 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
@@ -26,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment addComment(Integer adId, CreateOrUpdateComment createOrUpdateComment) {
         Comment comment = new Comment();
-        comment.setPk(adId);
+        comment.setCommentId(adId);
         comment.setText(createOrUpdateComment.getText());
         return commentRepository.save(comment);
     }
@@ -34,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Integer adId, Integer commentId) {
-        Comment comment = commentRepository.findByAdIdAndId(adId, commentId);
+        Comment comment = commentRepository.findByAdIdAndCommentId(adId, commentId);
         if (comment != null) {
             commentRepository.delete(comment);
         } else {
@@ -48,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment) {
-        Comment comment = commentRepository.findByAdIdAndId(adId, commentId);
+        Comment comment = commentRepository.findByAdIdAndCommentId(adId, commentId);
         if (comment == null) {
             try {
                 throw new FileNotFoundException("Comment not found");

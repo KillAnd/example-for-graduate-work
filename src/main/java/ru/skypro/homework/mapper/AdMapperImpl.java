@@ -28,7 +28,7 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdat
     @Override
     public ExtendedAd mapToExtendedAd(User user, Ad ad) {
         ExtendedAd dto = new ExtendedAd();
-        dto.setPk(ad.getPk());
+        dto.setAdId(ad.getAdId());
         dto.setAuthorFirstName(user.getFirstName());
         dto.setAuthorLastName(user.getLastName());
         dto.setDescription(ad.getDescription());
@@ -43,7 +43,7 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdat
     @Override
     public Ad mapFromExtendedAd(ExtendedAd extendedAd) {
         Ad ad = new Ad();
-        ad.setPk(extendedAd.getPk());
+        ad.setAdId(extendedAd.getAdId());
         ad.setTitle(extendedAd.getTitle());
         ad.setPrice(extendedAd.getPrice());
         ad.setDescription(extendedAd.getDescription());

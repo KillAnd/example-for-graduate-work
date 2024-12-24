@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
@@ -57,10 +58,12 @@ class AdsServiceImplTest {
     @Test
     public void testCreateAd() {
         //given
+        MultipartFile image = null;
         CreateOrUpdateAd createOrUpdateAd = new CreateOrUpdateAd();
         createOrUpdateAd.setTitle("New Ad");
         createOrUpdateAd.setPrice(10);
         createOrUpdateAd.setDescription("New Ad Description");
+
 
         Ad ad = new Ad();
         ad.setTitle("New Ad");
@@ -72,7 +75,7 @@ class AdsServiceImplTest {
         when(adMapper.mapToCreateOrUpdateAd(ad)).thenReturn(createOrUpdateAd);
 
         //when
-        CreateOrUpdateAd result = adsService.createAd(createOrUpdateAd);
+        CreateOrUpdateAd result = adsService.createAd(createOrUpdateAd, image);
 
         //then
         assertEquals(createOrUpdateAd, result);
@@ -87,12 +90,12 @@ class AdsServiceImplTest {
         User user = new User();
         int id = 1;
         Ad ad = new Ad();
-        ad.setPk(id);
+        ad.setAdId(id);
 
         when(adRepository.findById(id)).thenReturn(Optional.of(ad));
 
         ExtendedAd extendedAd = new ExtendedAd();
-        extendedAd.setPk(id);
+        extendedAd.setAdId(id);
         when(adMapper.mapToExtendedAd(user, ad)).thenReturn(extendedAd);
 
         //when
@@ -146,7 +149,7 @@ class AdsServiceImplTest {
         newAd.setDescription("Updated Ad Description");
 
         Ad ad = new Ad();
-        ad.setPk(id);
+        ad.setAdId(id);
         ad.setTitle("Updated Ad");
         ad.setPrice(20);
         ad.setDescription("Updated Ad Description");
@@ -221,7 +224,7 @@ class AdsServiceImplTest {
         newAd.setDescription("Updated Ad Description");
 
         Ad ad = new Ad();
-        ad.setPk(nonExistentAdId);
+        ad.setAdId(nonExistentAdId);
         ad.setTitle("Updated Ad");
         ad.setPrice(20);
         ad.setDescription("Updated Ad Description");

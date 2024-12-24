@@ -13,11 +13,11 @@ public class Image {
     private long fileSize;
     private String mediaType;
     private byte[] data;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user; // Связь с пользователем
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "ad_id")
     private Ad ad; // Связь с объявлением
 

@@ -1,10 +1,11 @@
 package ru.skypro.homework.dto;
 
 public class ImageDTO {
-
+    private long id;
     private String filePath;
     private Long fileSize;
     private String mediaType;
+    private byte[] data;
 
     public String getFilePath() {
         return filePath;
@@ -28,5 +29,21 @@ public class ImageDTO {
 
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 }

@@ -4,12 +4,12 @@ import ru.skypro.homework.model.Image;
 
 public class ExtendedAd {
 
-    private int pk;
+    private int adId;
     private String authorFirstName;
     private String authorLastName;
     private String description;
     private String email;
-    private ImageDTO image;
+    private Image image;
     private String phone;
     private int price;
     private String title;
@@ -17,12 +17,12 @@ public class ExtendedAd {
     public ExtendedAd() {
     }
 
-    public int getPk() {
-        return pk;
+    public int getAdId() {
+        return adId;
     }
 
-    public void setPk(int pk) {
-        this.pk = pk;
+    public void setAdId(int adId) {
+        this.adId = adId;
     }
 
     public String getAuthorFirstName() {
@@ -57,11 +57,11 @@ public class ExtendedAd {
         this.email = email;
     }
 
-    public ImageDTO getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(ImageDTO image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 

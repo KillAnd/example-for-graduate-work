@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ImageDTO;
 import ru.skypro.homework.exception.ImageNotFoundException;
-import ru.skypro.homework.mapper.ImageMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
@@ -30,22 +28,19 @@ public class ImageServiceImpl implements ImageService {
     private AdRepository adRepository;
     @Autowired
     private ImageRepository imageRepository;
-    @Autowired
-    private ImageMapper imageMapper;
 
     @Value("${path.to.image.folder}")
     private String imageDir;
 
     @Override
-    public ImageDTO uploadUserImage(String userId, MultipartFile imageFile) throws IOException {
+    public Image uploadUserImage(String userId, MultipartFile imageFile) throws IOException {
         User user = userRepository.findByEmail(userId).orElseThrow(() ->
                 new IllegalArgumentException("User with id " + userId + " not found"));
 
         Path imagePath = saveToLocalDirectoryUser(user, imageFile);
         Image image = saveToDataBasedUser(user, imagePath, imageFile);
 
-        // Преобразуем сущность в DTO
-        return imageMapper.toDTO(image);
+        return image;
     }
 
     @Override
@@ -78,15 +73,14 @@ public class ImageServiceImpl implements ImageService {
         return imageRepository.save(image);
     }
     @Override
-    public ImageDTO uploadAdImage(Integer adId, MultipartFile imageFile) throws IOException {
+    public Image uploadAdImage(Integer adId, MultipartFile imageFile) throws IOException {
         Ad ad = adRepository.findById(adId).orElseThrow(() ->
                 new IllegalArgumentException("User with id " + adId + " not found"));
 
         Path imagePath = saveToLocalDirectoryAd(ad, imageFile);
         Image image = saveToDataBasedAd(ad, imagePath, imageFile);
 
-        // Преобразуем сущность в DTO
-        return imageMapper.toDTO(image);
+        return image;
     }
     @Override
     public Path saveToLocalDirectoryAd(Ad ad, MultipartFile imageFile) throws IOException {
@@ -135,26 +129,26 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ImageDTO getImageByUser(String userId) {
+    public Image getImageByUser(String userId) {
         User user = userRepository.findByEmail(userId).orElseThrow(() ->
                 new IllegalArgumentException("User with id " + userId + " not found"));
 
         Image image = imageRepository.findByUser(user).orElseThrow(() ->
                 new ImageNotFoundException("Image not found for user: " + userId));
 
-        // Преобразуем сущность в DTO
-        return imageMapper.toDTO(image);
+
+        return image;
     }
     @Override
-    public ImageDTO getImageByAd(Integer adId) {
+    public Image getImageByAd(Integer adId) {
         Ad ad = adRepository.findById(adId).orElseThrow(() ->
                 new IllegalArgumentException("User with id " + adId + " not found"));
 
         Image image = imageRepository.findByAd(ad).orElseThrow(() ->
                 new ImageNotFoundException("Image not found for user: " + adId));
 
-        // Преобразуем сущность в DTO
-        return imageMapper.toDTO(image);
+
+        return image;
     }
     private static String getExtensions(String fileName) {
 

@@ -10,9 +10,13 @@ import java.util.List;
 @Mapper
 public interface CommentsMapper {
 
-    @Mapping(source = "comments", target = "results")
-    Comments mapToComments(List<Comment> comments);
+    default Comments mapToComments(List<Comment> comments) {
+        Comments result = new Comments();
+        result.setResults(comments);
+        return result;
+    }
 
-    @Mapping(source = "results", target = "comments")
-    List<Comment> mapFromComments(Comments comments);
+    default List<Comment> mapFromComments(Comments comments) {
+        return comments.getResults();
+    }
 }

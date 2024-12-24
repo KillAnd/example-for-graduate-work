@@ -248,13 +248,13 @@ public class UserServiceImplTest {
 
         // Мокирование репозитория и ImageService
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        doNothing().when(imageService).uploadImage(email, image);
+        doNothing().when(imageService).uploadUserImage(email, image);
 
         // Выполнение теста
         userService.updateUserImage(email, image);
 
         // Проверка, что метод uploadImage вызван
-        verify(imageService, times(1)).uploadImage(email, image);
+        verify(imageService, times(1)).uploadUserImage(email, image);
     }
 
     @Test
@@ -282,7 +282,7 @@ public class UserServiceImplTest {
 
         // Мокирование репозитория и ImageService
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        doThrow(IOException.class).when(imageService).uploadImage(email, image);
+        doThrow(IOException.class).when(imageService).uploadUserImage(email, image);
 
         // Выполнение теста и проверка исключения
         assertThrows(RuntimeException.class, () -> {
