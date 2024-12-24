@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class AdsServiceImpl implements AdsService {
+
     private final AdRepository adRepository;
 
     private final AdMapperImpl adMapper;
@@ -43,6 +44,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToExtendedAd(user, adRepository.findById(id).get());
     }
 
+
     @Override
     public void deleteAd(int id) {
         adRepository.deleteById(id);
@@ -53,12 +55,14 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToAds(adRepository.findAdsByAuthor(currentUserId));
     }
 
+
     @Override
     public CreateOrUpdateAd updateAd(int id, CreateOrUpdateAd newAd) {
         Ad ad = adMapper.mapFromCreateOrUpdateAd(newAd);
         ad.setPk(id);
         return adMapper.mapToCreateOrUpdateAd(adRepository.save(ad));
     }
+
 
     @Override
     public void updateAdImage(Integer id, MultipartFile image) throws IOException {
@@ -75,7 +79,7 @@ public class AdsServiceImpl implements AdsService {
             ImageDTO imagePath = imageService.uploadAdImage(id, image);
 
             // Обновить ссылку на изображение в объявлении
-            ad.setImage(imagePath);
+            ad.setImageAd(imagePath);
 
             // Сохранить обновленное объявление в базе данных
             adRepository.save(ad);

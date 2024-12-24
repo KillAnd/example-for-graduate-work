@@ -20,6 +20,7 @@ import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -74,6 +75,7 @@ public class AdsController {
     }
 
     //Удаление объявления
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAd(@PathVariable int id) {
         User user = new User();
@@ -96,6 +98,7 @@ public class AdsController {
     }
 
     //Обновление информации об объявлении
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<CreateOrUpdateAd> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                        @AuthenticationPrincipal User user) {
@@ -129,9 +132,10 @@ public class AdsController {
     }
 
     // Обновление картинки объявления
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}/image")
     public ResponseEntity<Void> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image,
-                                              @AuthenticationPrincipal User user) {
+                                              @AuthenticationPrincipal User user) throws IOException {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

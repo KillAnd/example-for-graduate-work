@@ -7,8 +7,6 @@ import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.model.User;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -35,7 +33,7 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdat
         dto.setAuthorLastName(user.getLastName());
         dto.setDescription(ad.getDescription());
         dto.setEmail(user.getEmail());
-        dto.setImage(ad.getImage());
+        dto.setImage(ad.getImageAd());
         dto.setPhone(user.getPhone());
         dto.setPrice(ad.getPrice());
         dto.setTitle(ad.getTitle());
@@ -49,7 +47,7 @@ public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdat
         ad.setTitle(extendedAd.getTitle());
         ad.setPrice(extendedAd.getPrice());
         ad.setDescription(extendedAd.getDescription());
-        ad.setImage(extendedAd.getImage());
+        ad.setImageAd(extendedAd.getImage());
         return ad;
     }
 

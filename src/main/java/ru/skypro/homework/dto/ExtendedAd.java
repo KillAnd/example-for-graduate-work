@@ -9,7 +9,7 @@ public class ExtendedAd {
     private String authorLastName;
     private String description;
     private String email;
-    private Image image;
+    private ImageDTO image;
     private String phone;
     private int price;
     private String title;
@@ -57,11 +57,11 @@ public class ExtendedAd {
         this.email = email;
     }
 
-    public Image getImage() {
+    public ImageDTO getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(ImageDTO image) {
         this.image = image;
     }
 

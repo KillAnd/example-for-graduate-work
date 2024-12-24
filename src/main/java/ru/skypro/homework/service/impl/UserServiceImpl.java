@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -95,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
             try {
                 // Используем ImageService для сохранения изображения
-                imageService.uploadImage(email, image);
+                imageService.uploadUserImage(email, image);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to update user image", e);
             }
