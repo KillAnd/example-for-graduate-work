@@ -22,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> getCommentsById(Integer id) {
         return commentRepository.findById(id).stream().collect(Collectors.toList());
     }
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
     @Override
     public Comment addComment(Integer adId, CreateOrUpdateComment createOrUpdateComment) {
         Comment comment = new Comment();
@@ -31,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.save(comment);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
     @Override
     public void deleteComment(Integer adId, Integer commentId) {
         Comment comment = commentRepository.findByAdIdAndId(adId, commentId);
@@ -46,7 +46,6 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Override
     public Comment updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment) {
         Comment comment = commentRepository.findByAdIdAndId(adId, commentId);

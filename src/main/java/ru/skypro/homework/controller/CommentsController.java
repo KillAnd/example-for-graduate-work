@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
@@ -32,12 +33,15 @@ public class CommentsController {
         return ResponseEntity.ok(newComment);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("{adId}/comments/{commentId}") // удаление комментария
     public ResponseEntity<Void> deleteComment(@PathVariable("adId") int adId, @PathVariable("commentId") Integer commentId) {
         commentService.deleteComment(adId, commentId);
         return ResponseEntity.ok().build();
 
     }
+
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("{adId}/comments/{commentId}") // обновление комментария
     public ResponseEntity<Comment> updateComment(@PathVariable("adId") int adId,
                                               @PathVariable("commentId") int commentId,

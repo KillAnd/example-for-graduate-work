@@ -75,6 +75,7 @@ public class AdsController {
     }
 
     //Удаление объявления
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAd(@PathVariable int id) {
         User user = new User();
@@ -97,6 +98,7 @@ public class AdsController {
     }
 
     //Обновление информации об объявлении
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<CreateOrUpdateAd> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                        @AuthenticationPrincipal User user) {
@@ -130,6 +132,7 @@ public class AdsController {
     }
 
     // Обновление картинки объявления
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}/image")
     public ResponseEntity<Void> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image,
                                               @AuthenticationPrincipal User user) throws IOException {

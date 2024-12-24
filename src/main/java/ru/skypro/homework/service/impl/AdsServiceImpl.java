@@ -45,7 +45,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToExtendedAd(user, adRepository.findById(id).get());
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
     @Override
     public void deleteAd(int id) {
         adRepository.deleteById(id);
@@ -56,7 +56,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToAds(adRepository.findAdsByAuthor(currentUserId));
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
     @Override
     public CreateOrUpdateAd updateAd(int id, CreateOrUpdateAd newAd) {
         Ad ad = adMapper.mapFromCreateOrUpdateAd(newAd);
@@ -64,7 +64,7 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.mapToCreateOrUpdateAd(adRepository.save(ad));
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
     @Override
     public void updateAdImage(Integer id, MultipartFile image) throws IOException {
         {
