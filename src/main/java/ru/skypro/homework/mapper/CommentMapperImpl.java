@@ -15,13 +15,13 @@ public class CommentMapperImpl implements CommentsMapper, CreateOrUpdateCommentM
     public Comments mapToComments(List<Comment> comments) {
         Comments dto = new Comments();
         dto.setCount(comments.size());
-        dto.setResults(comments.toArray(new Comment[0]));
+        dto.setResults(comments);
         return dto;
     }
 
     @Override
     public List<Comment> mapFromComments(Comments dto) {
-        return Arrays.asList(dto.getResults());
+        return dto.getResults();
     }
 
     @Override
