@@ -3,15 +3,23 @@ package ru.skypro.homework.service.impl;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.mapper.CommentMapper;
+
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.service.CommentService;
-
 import java.io.FileNotFoundException;
 
 @Service
 public class CommentServiceImpl implements CommentService {
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
+
+    public CommentServiceImpl(CommentMapper commentMapper, CommentRepository commentRepository) {
+        this.commentMapper = commentMapper;
+        this.commentRepository = commentRepository;
+    }
 
 
     private final CommentMapper commentMapper;
@@ -53,5 +61,6 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.save(comment);
 
     }
+
 
 }
