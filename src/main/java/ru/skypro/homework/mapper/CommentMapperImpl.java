@@ -4,37 +4,39 @@ import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.model.Comment;
+import ru.skypro.homework.mapper.CommentMapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-public class CommentMapperImpl implements CommentsMapper, CreateOrUpdateCommentMapper{
-
-    @Override
-    public Comments mapToComments(List<Comment> comments) {
+public class CommentMapperImpl implements CommentMapper {
+    public Comments mapToDto(List<Comment> comments) {
         Comments dto = new Comments();
         dto.setCount(comments.size());
-        dto.setResults(comments);
+        dto.setResults(List.of(comments.toArray(new Comment[0])));
         return dto;
     }
 
-    @Override
-    public List<Comment> mapFromComments(Comments dto) {
-        return dto.getResults();
+    public List<Comment> mapFromDto(Comments comments) {
+        return new ArrayList<>((comments.getResults()));
     }
 
-    @Override
-    public CreateOrUpdateComment mapToreateOrUpdateComment(Comment comment) {
-        CreateOrUpdateComment dto = new CreateOrUpdateComment();
-        dto.setText(comment.getText());
-        return dto;
+    public Comment mapToCreateOrUpdateComment(Comment comment, CreateOrUpdateComment createOrUpdateComment) {
+        if (createOrUpdateComment != null) {
+            comment.setText(createOrUpdateComment.getText());
+        }
+        return comment;
     }
 
-    @Override
-    public Comment mapFromCreateOrUpdateComment(CreateOrUpdateComment dto) {
+    public Comment mapInComment(Integer adId, CreateOrUpdateComment createOrUpdateComment) {
         Comment comment = new Comment();
-        comment.setText(dto.getText());
+        if (createOrUpdateComment != null) {
+            comment.setAuthor(adId);
+            comment.setText(createOrUpdateComment.getText());
+        }
         return comment;
     }
 }
