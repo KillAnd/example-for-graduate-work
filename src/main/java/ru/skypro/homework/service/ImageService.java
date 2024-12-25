@@ -11,15 +11,15 @@ import java.nio.file.Path;
 
 public interface ImageService {
 
-    ImageDTO uploadUserImage(String userId, MultipartFile imageFile) throws IOException;
+    Image uploadUserImage(String userId, MultipartFile imageFile) throws IOException;
     Path saveToLocalDirectoryUser(User user, MultipartFile imageFile) throws IOException;
     Image saveToDataBasedUser(User user, Path imagePath, MultipartFile imageFile) throws IOException;
 
     Image getImageUser(User user);
 
-    ImageDTO getImageByUser(String userId);
+    Image getImageByUser(String userId);
 
-    ImageDTO uploadAdImage(Integer adId, MultipartFile imageFile) throws IOException;
+    Image uploadAdImage(Integer adId, MultipartFile imageFile) throws IOException;
 
     Path saveToLocalDirectoryAd(Ad ad, MultipartFile imageFile) throws IOException;
 
@@ -27,5 +27,5 @@ public interface ImageService {
 
     Image getImageAd(Ad ad);
 
-    ImageDTO getImageByAd(Integer adId);
+    Image getImageByAd(Integer adId);
 }

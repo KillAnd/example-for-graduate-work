@@ -1,12 +1,13 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
-import ru.skypro.homework.dto.ImageDTO;
 import ru.skypro.homework.mapper.AdMapperImpl;
 import ru.skypro.homework.model.Ad;
+import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdsService;
@@ -15,7 +16,7 @@ import ru.skypro.homework.service.ImageService;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
-
+@Service
 public class AdsServiceImpl implements AdsService {
 
     private final AdRepository adRepository;
@@ -59,7 +60,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public CreateOrUpdateAd updateAd(int id, CreateOrUpdateAd newAd) {
         Ad ad = adMapper.mapFromCreateOrUpdateAd(newAd);
-        ad.setPk(id);
+        ad.setAdId(id);
         return adMapper.mapToCreateOrUpdateAd(adRepository.save(ad));
     }
 
@@ -76,7 +77,7 @@ public class AdsServiceImpl implements AdsService {
             Ad ad = adOptional.get();
 
             // Сохранить новое изображение
-            ImageDTO imagePath = imageService.uploadAdImage(id, image);
+            Image imagePath = imageService.uploadAdImage(id, image);
 
             // Обновить ссылку на изображение в объявлении
             ad.setImageAd(imagePath);
@@ -94,7 +95,7 @@ public class AdsServiceImpl implements AdsService {
         }
 
         // Сравниваем идентификатор пользователя с идентификатором владельца объявления
-        return userId != null && userId.equals(ad.getPk());
+        return userId != null && userId.equals(ad.getAdId());
     }
 
 }

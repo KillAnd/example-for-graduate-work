@@ -8,7 +8,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ImageDTO;
 import ru.skypro.homework.exception.ImageNotFoundException;
-import ru.skypro.homework.mapper.ImageMapper;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.ImageRepository;
@@ -33,8 +32,6 @@ public class ImageServiceImplTest {
     @Mock
     private ImageRepository imageRepository;
 
-    @Mock
-    private ImageMapper imageMapper;
 
     @InjectMocks
     private ImageServiceImpl imageService;
@@ -63,10 +60,9 @@ public class ImageServiceImplTest {
         // Мокирование репозиториев и маппера
         when(userRepository.findByEmail(userId)).thenReturn(Optional.of(user));
         when(imageRepository.save(any(Image.class))).thenReturn(image);
-        when(imageMapper.toDTO(image)).thenReturn(imageDTO);
 
         // Выполнение теста
-        ImageDTO result = imageService.uploadImage(userId, imageFile);
+        Image result = imageService.uploadUserImage(userId, imageFile);
 
         // Проверка результата
         assertNotNull(result);
@@ -86,7 +82,7 @@ public class ImageServiceImplTest {
 
         // Выполнение теста и проверка исключения
         assertThrows(IllegalArgumentException.class, () -> {
-            imageService.uploadImage(userId, imageFile);
+            imageService.uploadUserImage(userId, imageFile);
         });
     }
 
@@ -100,7 +96,7 @@ public class ImageServiceImplTest {
         user.setEmail(userId);
 
         // Выполнение теста
-        Path result = imageService.saveToLocalDirectory(user, imageFile);
+        Path result = imageService.saveToLocalDirectoryUser(user, imageFile);
 
         // Проверка результата
         assertNotNull(result);
@@ -129,7 +125,7 @@ public class ImageServiceImplTest {
         when(imageRepository.save(any(Image.class))).thenReturn(image);
 
         // Выполнение теста
-        Image result = imageService.saveToDataBased(user, imagePath, imageFile);
+        Image result = imageService.saveToDataBasedUser(user, imagePath, imageFile);
 
         // Проверка результата
         assertNotNull(result);
@@ -196,10 +192,9 @@ public class ImageServiceImplTest {
         // Мокирование репозиториев и маппера
         when(userRepository.findByEmail(userId)).thenReturn(Optional.of(user));
         when(imageRepository.findByUser(user)).thenReturn(Optional.of(image));
-        when(imageMapper.toDTO(image)).thenReturn(imageDTO);
 
         // Выполнение теста
-        ImageDTO result = imageService.getImageByUser(userId);
+        Image result = imageService.getImageByUser(userId);
 
         // Проверка результата
         assertNotNull(result);

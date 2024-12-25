@@ -1,11 +1,14 @@
 package ru.skypro.homework.config;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skypro.homework.model.User;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class MyUserDetails implements UserDetails {
 
@@ -17,36 +20,43 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        // Возвращаем роли пользователя
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
     @Override
     public String getPassword() {
-        return "";
+        // Возвращаем зашифрованный пароль пользователя
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        // Возвращаем уникальный идентификатор пользователя
+        return user.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        // Указываем, что аккаунт не просрочен
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        // Указываем, что аккаунт не заблокирован
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        // Указываем, что учетные данные не просрочены
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        // Указываем, что аккаунт активен
+        return true;
     }
 }

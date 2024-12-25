@@ -7,18 +7,18 @@ public class CreateOrUpdateComment {
     private int textMinimalLength = 8;
     private int TextMaximalLength = 64;
 
-    private String text;
+    private String textDTO;
 
     public CreateOrUpdateComment() {
     }
 
-    public String getText() {
-        return text;
+    public String getTextDTO() {
+        return textDTO;
     }
 
-    public void setText(String text) throws CreateOrUpdateCommentException {
-        if (text.length() >= textMinimalLength && text.length() <= TextMaximalLength) {
-            this.text = text;
+    public void setTextDTO(String textDTO) throws CreateOrUpdateCommentException {
+        if (textDTO.length() >= textMinimalLength && textDTO.length() <= TextMaximalLength) {
+            this.textDTO = textDTO;
         } else {
             throw new CreateOrUpdateCommentException("text length");
         }

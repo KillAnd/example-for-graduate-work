@@ -7,12 +7,14 @@ import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.mapper.CommentMapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class CommentMapperImpl implements CommentMapper {
+
+
+
     public Comments mapToDto(List<Comment> comments) {
         Comments dto = new Comments();
         dto.setCount(comments.size());
@@ -26,7 +28,9 @@ public class CommentMapperImpl implements CommentMapper {
 
     public Comment mapToCreateOrUpdateComment(Comment comment, CreateOrUpdateComment createOrUpdateComment) {
         if (createOrUpdateComment != null) {
-            comment.setText(createOrUpdateComment.getText());
+
+            comment.setText(createOrUpdateComment.getTextDTO());
+
         }
         return comment;
     }
@@ -35,7 +39,7 @@ public class CommentMapperImpl implements CommentMapper {
         Comment comment = new Comment();
         if (createOrUpdateComment != null) {
             comment.setAuthor(adId);
-            comment.setText(createOrUpdateComment.getText());
+            comment.setText(createOrUpdateComment.getTextDTO());
         }
         return comment;
     }

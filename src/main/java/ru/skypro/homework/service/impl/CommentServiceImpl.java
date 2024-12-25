@@ -2,6 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.mapper.CommentMapper;
+
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repository.CommentRepository;
@@ -19,7 +21,16 @@ public class CommentServiceImpl implements CommentService {
         this.commentRepository = commentRepository;
     }
 
-    @Override  // изменил Integer на int чтобы не обрабатывать null(если что исправлю) так же изменил метод сервиса уже под маппер
+
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
+
+    public CommentServiceImpl(CommentMapper commentMapper, CommentRepository commentRepository) {
+        this.commentMapper = commentMapper;
+        this.commentRepository = commentRepository;
+    }
+
+    @Override
     public Comments getCommentsById(int id) {
         return commentMapper.mapToDto(commentRepository.findById(id));
     }

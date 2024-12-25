@@ -1,11 +1,6 @@
 package ru.skypro.homework.model;
 
-import ru.skypro.homework.model.Ad;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class Comment {
@@ -16,10 +11,11 @@ public class Comment {
     private long createdAt;
     @Id
     @GeneratedValue
-    private int pk;
+    private int commentId;
     private String text;
 
     @ManyToOne
+    @JoinColumn(name = "ad_id")
     private Ad ad;
 
     public Comment() {
@@ -57,12 +53,12 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
-    public int getPk() {
-        return pk;
+    public int getCommentId() {
+        return commentId;
     }
 
-    public void setPk(int pk) {
-        this.pk = pk;
+    public void setCommentId(int commentId) {
+        this.commentId = commentId;
     }
 
     public String getText() {
@@ -71,5 +67,13 @@ public class Comment {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Ad getAd() {
+        return ad;
+    }
+
+    public void setAd(Ad ad) {
+        this.ad = ad;
     }
 }
