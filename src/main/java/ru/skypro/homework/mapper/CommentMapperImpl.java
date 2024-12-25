@@ -5,36 +5,36 @@ import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.model.Comment;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CommentMapperImpl implements CommentsMapper, CreateOrUpdateCommentMapper{
+public class CommentMapperImpl implements CommentMapper {
 
-    @Override
-    public Comments mapToComments(List<Comment> comments) {
+    public Comments mapToDto(List<Comment> comments) {
         Comments dto = new Comments();
         dto.setCount(comments.size());
-        dto.setResults(comments);
+        dto.setResults(List.of(comments.toArray(new Comment[0])));
         return dto;
     }
 
-    @Override
-    public List<Comment> mapFromComments(Comments dto) {
-        return dto.getResults();
+    public List<Comment> mapFromDto(Comments comments) {
+        return new ArrayList<>((comments.getResults()));
     }
 
-    @Override
-    public CreateOrUpdateComment mapToreateOrUpdateComment(Comment comment) {
-        CreateOrUpdateComment dto = new CreateOrUpdateComment();
-        dto.setText(comment.getText());
-        return dto;
+    public Comment mapToCreateOrUpdateComment(Comment comment, CreateOrUpdateComment createOrUpdateComment) {
+        if (createOrUpdateComment != null) {
+            comment.setText(createOrUpdateComment.getTextDTO());
+        }
+        return comment;
     }
 
-    @Override
-    public Comment mapFromCreateOrUpdateComment(CreateOrUpdateComment dto) {
+    public Comment mapInComment(Integer adId, CreateOrUpdateComment createOrUpdateComment) {
         Comment comment = new Comment();
-        comment.setText(dto.getText());
+        if (createOrUpdateComment != null) {
+            comment.setAuthor(adId);
+            comment.setText(createOrUpdateComment.getTextDTO());
+        }
         return comment;
     }
 }

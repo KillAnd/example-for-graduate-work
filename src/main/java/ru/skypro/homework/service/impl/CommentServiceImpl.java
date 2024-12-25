@@ -1,39 +1,41 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 
 import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
 
 
-    @Autowired
-    private CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
+
+    public CommentServiceImpl(CommentMapper commentMapper, CommentRepository commentRepository) {
+        this.commentMapper = commentMapper;
+        this.commentRepository = commentRepository;
+    }
+
     @Override
-    public List<Comment> getCommentsById(Integer id) {
-        return commentRepository.findById(id).stream().collect(Collectors.toList());
+    public Comments getCommentsById(int id) {
+        return commentMapper.mapToDto(commentRepository.findById(id));
     }
 
     @Override
     public Comment addComment(Integer adId, CreateOrUpdateComment createOrUpdateComment) {
-        Comment comment = new Comment();
-        comment.setCommentId(adId);
-        comment.setText(createOrUpdateComment.getText());
-        return commentRepository.save(comment);
-    }
+        return commentRepository.save(commentMapper.mapInComment(adId, createOrUpdateComment)) ;
 
+    }
 
     @Override
     public void deleteComment(Integer adId, Integer commentId) {
-        Comment comment = commentRepository.findByAdIdAndCommentId(adId, commentId);
+        Comment comment = commentRepository.findByAdIdAndId(adId, commentId);
         if (comment != null) {
             commentRepository.delete(comment);
         } else {
@@ -47,16 +49,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment) {
-        Comment comment = commentRepository.findByAdIdAndCommentId(adId, commentId);
-        if (comment == null) {
-            try {
-                throw new FileNotFoundException("Comment not found");
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        comment.setText(createOrUpdateComment.getText());
+        Comment comment = commentMapper.mapToCreateOrUpdateComment((commentRepository.findByAdIdAndId(adId, commentId)), createOrUpdateComment);
         return commentRepository.save(comment);
+
     }
 
 }

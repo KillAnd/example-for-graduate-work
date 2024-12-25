@@ -1,9 +1,6 @@
 package ru.skypro.homework.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class Comment {
@@ -18,6 +15,7 @@ public class Comment {
     private String text;
 
     @ManyToOne
+    @JoinColumn(name = "ad_id")
     private Ad ad;
 
     public Comment() {

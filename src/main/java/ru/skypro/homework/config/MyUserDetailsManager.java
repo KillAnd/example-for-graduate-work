@@ -7,11 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.exception.UserNotFoundException;
-import ru.skypro.homework.mapper.UpdateUserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
-
-import java.util.Optional;
 
 @Service
 public class MyUserDetailsManager implements UserDetailsService {
