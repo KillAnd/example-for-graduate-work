@@ -21,15 +21,6 @@ public class CommentServiceImpl implements CommentService {
         this.commentRepository = commentRepository;
     }
 
-
-    private final CommentMapper commentMapper;
-    private final CommentRepository commentRepository;
-
-    public CommentServiceImpl(CommentMapper commentMapper, CommentRepository commentRepository) {
-        this.commentMapper = commentMapper;
-        this.commentRepository = commentRepository;
-    }
-
     @Override
     public Comments getCommentsById(int id) {
         return commentMapper.mapToDto(commentRepository.findById(id));
