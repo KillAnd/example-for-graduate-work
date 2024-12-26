@@ -20,6 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String email;
+    private String username;
     private String firstName;
     private String lastName;
     private String phone;
@@ -34,10 +35,11 @@ public class User {
     public User() {
     }
 
-    public User(int id, String email, String firstName, String lastName, String phone,
+    public User(int id, String email, String username, String firstName, String lastName, String phone,
                 Role role, Image imageUser, String password, List<Ad> ads) {
         this.id = id;
         this.email = email;
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -61,6 +63,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFirstName() {
@@ -115,21 +125,21 @@ public class User {
         return ads;
     }
 
+    public void setAds(List<Ad> ads) {
+        this.ads = ads;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(phone, user.phone) && role == user.role && Objects.equals(imageUser, user.imageUser) && Objects.equals(password, user.password) && Objects.equals(ads, user.ads);
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(phone, user.phone) && role == user.role && Objects.equals(imageUser, user.imageUser) && Objects.equals(password, user.password) && Objects.equals(ads, user.ads);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, firstName, lastName, phone, role, imageUser, password, ads);
-    }
-
-    public void setAds(List<Ad> ads) {
-        this.ads = ads;
+        return Objects.hash(id, email, username, firstName, lastName, phone, role, imageUser, password, ads);
     }
 
     @Override
@@ -137,6 +147,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +

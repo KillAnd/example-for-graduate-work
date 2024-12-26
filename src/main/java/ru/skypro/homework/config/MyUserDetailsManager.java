@@ -4,6 +4,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.exception.UserNotFoundException;
@@ -11,13 +12,11 @@ import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 
 @Service
-public class MyUserDetailsManager implements UserDetailsService {
+public class MyUserDetailsManager implements UserDetailsManager {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public MyUserDetailsManager(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public MyUserDetailsManager(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -30,17 +29,28 @@ public class MyUserDetailsManager implements UserDetailsService {
         return new MyUserDetails(user);
     }
 
-    public void createUser(UserDetails userDetails) {
-        // Преобразуем UserDetails в сущность User
-        User user = new User();
-        user.setEmail(userDetails.getUsername());
-        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        user.setRole(Role.valueOf(userDetails.getAuthorities().iterator().next().getAuthority()));
-        userRepository.save(user);
+    @Override
+    public void createUser(UserDetails user) {
+
     }
 
+    @Override
+    public void updateUser(UserDetails user) {
+
+    }
+
+    @Override
+    public void deleteUser(String username) {
+
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword) {
+
+    }
+
+    @Override
     public boolean userExists(String username) {
-        // Проверка, существует ли пользователь
-        return userRepository.findByEmail(username).isPresent();
+        return false;
     }
 }
