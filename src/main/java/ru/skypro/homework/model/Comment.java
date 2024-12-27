@@ -2,21 +2,55 @@ package ru.skypro.homework.model;
 
 import javax.persistence.*;
 
+/**
+ * Класс, представляющий сущность "Комментарий".
+ * Содержит информацию о комментарии, такую как автор, изображение автора, имя автора,
+ * дата создания, текст комментария и связанное объявление.
+ * Является сущностью JPA, связанной с таблицей в базе данных.
+ */
 @Entity
 public class Comment {
 
+    /**
+     * Идентификатор автора комментария.
+     */
     private int author;
+
+    /**
+     * Ссылка на изображение автора комментария.
+     */
     private String authorImage;
+
+    /**
+     * Имя автора комментария.
+     */
     private String authorFirstName;
+
+    /**
+     * Временная метка создания комментария (в миллисекундах).
+     */
     private long createdAt;
+
+    /**
+     * Уникальный идентификатор комментария.
+     */
     @Id
     @GeneratedValue
     private int commentId;
+
+    /**
+     * Текст комментария.
+     */
     private String text;
 
+    /**
+     * Объявление, к которому относится комментарий.
+     * Связь многие-к-одному с сущностью {@link Ad}.
+     */
     @ManyToOne
     @JoinColumn(name = "ad_id")
     private Ad ad;
+
 
     public Comment() {
     }

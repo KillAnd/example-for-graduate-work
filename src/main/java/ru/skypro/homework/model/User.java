@@ -12,24 +12,67 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Класс, представляющий сущность "Пользователь".
+ * Содержит информацию о пользователе, такую как email, имя, фамилия, телефон, роль, пароль,
+ * изображение профиля и список объявлений, созданных пользователем.
+ * Является сущностью JPA, связанной с таблицей "app_user" в базе данных.
+ */
 @Entity
 @Table(name = "app_user")
 public class User {
 
+    /**
+     * Уникальный идентификатор пользователя.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    /**
+     * Email пользователя, используется как логин
+     */
     private String email;
+
+    /**
+     * Имя пользователя.
+     */
     private String firstName;
+
+    /**
+     * Фамилия пользователя.
+     */
     private String lastName;
+
+    /**
+     * Номер телефона пользователя.
+     */
     private String phone;
+
+    /**
+     * Роль пользователя в системе.
+     */
     private Role role;
+
+    /**
+     * Изображение профиля пользователя.
+     * Связь один-к-одному с сущностью {@link Image}.
+     */
     @OneToOne(mappedBy = "user")
     private Image imageUser;
+
+    /**
+     * Пароль пользователя.
+     */
     private String password;
 
+    /**
+     * Список объявлений, созданных пользователем.
+     * Связь один-ко-многим с сущностью {@link Ad}.
+     */
     @OneToMany(mappedBy = "author")
     private List<Ad> ads = new ArrayList<>();
+
 
     public User() {
     }

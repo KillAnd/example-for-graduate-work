@@ -5,23 +5,58 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Класс, представляющий сущность "Объявление".
+ * Содержит информацию об объявлении, такую как цена, заголовок, описание, изображение, автор и комментарии.
+ * Является сущностью JPA, связанной с таблицей в базе данных.
+ */
 @Entity
 public class Ad {
 
+    /**
+     * Уникальный идентификатор объявления.
+     */
     @Id
     @GeneratedValue
     private int adId;
+
+    /**
+     * Цена объявления.
+     */
     private int price;
+
+    /**
+     * Заголовок объявления.
+     */
     private String title;
+
+    /**
+     * Описание объявления.
+     */
     private String description;
+
+    /**
+     * Изображение, связанное с объявлением.
+     * Связь один-к-одному с сущностью {@link Image}.
+     */
     @OneToOne(mappedBy = "ad")
     private Image imageAd;
+
+    /**
+     * Автор объявления.
+     * Связь многие-к-одному с сущностью {@link User}.
+     */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
 
+    /**
+     * Список комментариев, связанных с объявлением.
+     * Связь один-ко-многим с сущностью {@link Comment}.
+     */
     @OneToMany(mappedBy = "ad")
     private List<Comment> comments = new ArrayList<>();
+
 
     public Ad() {
     }

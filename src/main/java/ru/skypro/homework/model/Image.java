@@ -4,22 +4,60 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Класс, представляющий сущность "Изображение".
+ * Содержит информацию об изображении, такую как путь к файлу, размер файла, тип медиа, данные изображения,
+ * а также связи с пользователем и объявлением.
+ * Является сущностью JPA, связанной с таблицей в базе данных.
+ */
 @Entity
 public class Image {
+
+    /**
+     * Уникальный идентификатор изображения.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    /**
+     * Путь к файлу изображения.
+     */
     private String filePath;
+
+    /**
+     * Размер файла изображения в байтах.
+     */
     private long fileSize;
+
+    /**
+     * Тип медиа (MIME-тип) изображения.
+     */
     private String mediaType;
+
+    /**
+     * Данные изображения в виде массива байтов.
+     */
     private byte[] data;
+
+    /**
+     * Пользователь, связанный с изображением.
+     * Связь один-к-одному с сущностью {@link User}.
+     */
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user; // Связь с пользователем
+    private User user;
 
+    /**
+     * Объявление, связанное с изображением.
+     * Связь один-к-одному с сущностью {@link Ad}.
+     */
     @OneToOne
     @JoinColumn(name = "ad_id")
-    private Ad ad; // Связь с объявлением
+    private Ad ad;
+
+    // Геттеры и сеттеры (не показаны в коде, но могут быть добавлены)
+
 
     public Image() {
     }
