@@ -12,6 +12,11 @@ import ru.skypro.homework.dto.Login;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
+/**
+ * REST-контроллер для обработки запросов, связанных с аутентификацией и регистрацией пользователей.
+ * Предоставляет эндпоинты для входа в систему и регистрации новых пользователей.
+ * Поддерживает кросс-доменные запросы с указанного источника (http://localhost:3000).
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -20,6 +25,13 @@ public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * Обрабатывает запрос на вход в систему.
+     *
+     * @param login Объект {@link Login}, содержащий email и пароль пользователя.
+     * @return {@link ResponseEntity} с пустым телом и статусом {@link HttpStatus#OK}, если аутентификация прошла успешно.
+     *         Если аутентификация не удалась, возвращает статус {@link HttpStatus#UNAUTHORIZED}.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Login login) {
         if (authService.login(login.getEmail(), login.getPassword())) {
@@ -29,6 +41,13 @@ public class AuthController {
         }
     }
 
+    /**
+     * Обрабатывает запрос на регистрацию нового пользователя.
+     *
+     * @param register Объект {@link Register}, содержащий данные для регистрации пользователя.
+     * @return {@link ResponseEntity} с пустым телом и статусом {@link HttpStatus#CREATED}, если регистрация прошла успешно.
+     *         Если регистрация не удалась, возвращает статус {@link HttpStatus#BAD_REQUEST}.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register) {
         if (authService.register(register)) {

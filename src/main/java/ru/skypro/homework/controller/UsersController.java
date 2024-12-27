@@ -18,39 +18,60 @@ import ru.skypro.homework.service.UserService;
 
 import java.util.Optional;
 
+/**
+ * REST-контроллер для управления данными пользователей.
+ * Предоставляет эндпоинты для выполнения операций с пользователями, таких как:
+ * <ul>
+ *     <li>Изменение пароля пользователя</li>
+ *     <li>Получение данных текущего пользователя</li>
+ *     <li>Обновление информации о пользователе</li>
+ *     <li>Обновление изображения профиля пользователя</li>
+ * </ul>
+ * Все операции доступны только авторизованным пользователям.
+ */
 @RestController
 @RequestMapping("/users")
 public class UsersController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private ImageService imageService;
 
+    /**
+     * Изменяет пароль текущего пользователя.
+     *
+     * @param newPassword Объект {@link NewPassword}, содержащий новый пароль.
+     * @return {@link ResponseEntity} с пустым телом и статусом {@link HttpStatus#OK}, если пароль успешно изменен.
+     *         Если новый пароль не соответствует требованиям, возвращает статус {@link HttpStatus#BAD_REQUEST}.
+     */
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPassword newPassword) {
-        // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUserEmail = authentication.getName();
 
         try {
-            // Вызов сервиса для обновления пароля
             userService.updatePassword(currentUserEmail, newPassword);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NewPasswordException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    /**
+     * Получает данные текущего авторизованного пользователя.
+     *
+     * @return {@link ResponseEntity} с объектом {@link Optional<User>}, содержащим данные пользователя.
+     *         Если пользователь не найден, выбрасывает исключение {@link UnauthorizedException}.
+     */
     @GetMapping("/me")
     public ResponseEntity<Optional<User>> getUser() {
-        // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUserEmail = authentication.getName();
 
-        // Вызов сервиса для получения данных пользователя
         Optional<User> user = userService.findUserByEmail(currentUserEmail);
 
-        // Проверка, что пользователь найден
         if (user.isEmpty()) {
             throw new UnauthorizedException("User not found");
         }
@@ -58,36 +79,40 @@ public class UsersController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    // Метод для обновления информации об авторизованном пользователе
+    /**
+     * Обновляет информацию о текущем авторизованном пользователе.
+     *
+     * @param updateUser Объект {@link UpdateUser}, содержащий новые данные пользователя.
+     * @return {@link ResponseEntity} с обновленным объектом {@link User}.
+     */
     @PatchMapping("/me")
     public ResponseEntity<User> updateUser(@RequestBody UpdateUser updateUser) {
-        // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUserEmail = authentication.getName();
 
-        // Вызов сервиса для обновления данных пользователя
         User updatedUser = userService.updateUser(currentUserEmail, updateUser);
-
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    /**
+     * Обновляет изображение профиля текущего авторизованного пользователя.
+     *
+     * @param image Новое изображение профиля.
+     * @return {@link ResponseEntity} с сообщением об успешном обновлении изображения.
+     *         Если пользователь не найден, возвращает статус {@link HttpStatus#NOT_FOUND}.
+     *         Если произошла ошибка при обработке изображения, возвращает статус {@link HttpStatus#INTERNAL_SERVER_ERROR}.
+     */
     @PatchMapping("/me/image")
     public ResponseEntity<String> updateUserImage(@RequestParam("image") MultipartFile image) {
         try {
-            // Получение текущего пользователя из контекста безопасности
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUserEmail = authentication.getName();
 
-            // Вызов сервиса для обновления изображения пользователя
             userService.updateUserImage(currentUserEmail, image);
-
-            // Возвращаем успешный ответ
             return ResponseEntity.ok("Image updated successfully");
         } catch (UserNotFoundException e) {
-            // Обработка случая, если пользователь не найден
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            // Обработка других ошибок
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update image");
         }
     }
