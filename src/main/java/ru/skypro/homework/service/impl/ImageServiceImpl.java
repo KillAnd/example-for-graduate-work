@@ -19,6 +19,11 @@ import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
+/**
+ * Сервис для работы с изображениями.
+ * Реализует интерфейс {@link ImageService} и предоставляет методы для загрузки, сохранения
+ * и получения изображений, связанных с пользователями и объявлениями.
+ */
 @Service
 public class ImageServiceImpl implements ImageService {
     private final int BUFFER_SIZE = 1024;
@@ -32,6 +37,14 @@ public class ImageServiceImpl implements ImageService {
     @Value("${path.to.image.folder}")
     private String imageDir;
 
+    /**
+     * Загружает изображение для пользователя.
+     *
+     * @param userId    Идентификатор пользователя.
+     * @param imageFile Файл изображения.
+     * @return Объект {@link Image}, представляющий загруженное изображение.
+     * @throws IOException Если возникает ошибка при загрузке изображения.
+     */
     @Override
     public Image uploadUserImage(String userId, MultipartFile imageFile) throws IOException {
         User user = userRepository.findByEmail(userId).orElseThrow(() ->
@@ -43,6 +56,14 @@ public class ImageServiceImpl implements ImageService {
         return image;
     }
 
+    /**
+     * Сохраняет изображение пользователя в локальной директории.
+     *
+     * @param user      Пользователь, для которого сохраняется изображение.
+     * @param imageFile Файл изображения.
+     * @return Путь к сохраненному изображению.
+     * @throws IOException Если возникает ошибка при сохранении изображения.
+     */
     @Override
     public Path saveToLocalDirectoryUser(User user, MultipartFile imageFile) throws IOException {
         Path imagePath = Path
@@ -60,9 +81,18 @@ public class ImageServiceImpl implements ImageService {
 
         return imagePath;
     }
+
+    /**
+     * Сохраняет изображение пользователя в базе данных.
+     *
+     * @param user      Пользователь, для которого сохраняется изображение.
+     * @param imagePath Путь к изображению в локальной директории.
+     * @param imageFile Файл изображения.
+     * @return Объект {@link Image}, представляющий сохраненное изображение.
+     * @throws IOException Если возникает ошибка при сохранении изображения.
+     */
     @Override
     public Image saveToDataBasedUser(User user, Path imagePath, MultipartFile imageFile) throws IOException {
-
         Image image = getImageUser(user);
         image.setUser(user);
         image.setFilePath(imagePath.toString());
@@ -72,6 +102,15 @@ public class ImageServiceImpl implements ImageService {
 
         return imageRepository.save(image);
     }
+
+    /**
+     * Загружает изображение для объявления.
+     *
+     * @param adId      Идентификатор объявления.
+     * @param imageFile Файл изображения.
+     * @return Объект {@link Image}, представляющий загруженное изображение.
+     * @throws IOException Если возникает ошибка при загрузке изображения.
+     */
     @Override
     public Image uploadAdImage(Integer adId, MultipartFile imageFile) throws IOException {
         Ad ad = adRepository.findById(adId).orElseThrow(() ->
@@ -82,6 +121,15 @@ public class ImageServiceImpl implements ImageService {
 
         return image;
     }
+
+    /**
+     * Сохраняет изображение объявления в локальной директории.
+     *
+     * @param ad        Объявление, для которого сохраняется изображение.
+     * @param imageFile Файл изображения.
+     * @return Путь к сохраненному изображению.
+     * @throws IOException Если возникает ошибка при сохранении изображения.
+     */
     @Override
     public Path saveToLocalDirectoryAd(Ad ad, MultipartFile imageFile) throws IOException {
         Path imagePath = Path
@@ -99,9 +147,18 @@ public class ImageServiceImpl implements ImageService {
 
         return imagePath;
     }
+
+    /**
+     * Сохраняет изображение объявления в базе данных.
+     *
+     * @param ad        Объявление, для которого сохраняется изображение.
+     * @param imagePath Путь к изображению в локальной директории.
+     * @param imageFile Файл изображения.
+     * @return Объект {@link Image}, представляющий сохраненное изображение.
+     * @throws IOException Если возникает ошибка при сохранении изображения.
+     */
     @Override
     public Image saveToDataBasedAd(Ad ad, Path imagePath, MultipartFile imageFile) throws IOException {
-
         Image image = getImageAd(ad);
         image.setAd(ad);
         image.setFilePath(imagePath.toString());
@@ -111,6 +168,13 @@ public class ImageServiceImpl implements ImageService {
 
         return imageRepository.save(image);
     }
+
+    /**
+     * Возвращает изображение пользователя.
+     *
+     * @param user Пользователь, для которого запрашивается изображение.
+     * @return Объект {@link Image}, представляющий изображение пользователя.
+     */
     @Override
     public Image getImageUser(User user) {
         return imageRepository.findByUser(user).orElseGet(() -> {
@@ -119,6 +183,13 @@ public class ImageServiceImpl implements ImageService {
             return image;
         });
     }
+
+    /**
+     * Возвращает изображение объявления.
+     *
+     * @param ad Объявление, для которого запрашивается изображение.
+     * @return Объект {@link Image}, представляющий изображение объявления.
+     */
     @Override
     public Image getImageAd(Ad ad) {
         return imageRepository.findByAd(ad).orElseGet(() -> {
@@ -128,6 +199,14 @@ public class ImageServiceImpl implements ImageService {
         });
     }
 
+    /**
+     * Возвращает изображение пользователя по его идентификатору.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return Объект {@link Image}, представляющий изображение пользователя.
+     * @throws IllegalArgumentException Если пользователь не найден.
+     * @throws ImageNotFoundException   Если изображение не найдено.
+     */
     @Override
     public Image getImageByUser(String userId) {
         User user = userRepository.findByEmail(userId).orElseThrow(() ->
@@ -136,9 +215,17 @@ public class ImageServiceImpl implements ImageService {
         Image image = imageRepository.findByUser(user).orElseThrow(() ->
                 new ImageNotFoundException("Image not found for user: " + userId));
 
-
         return image;
     }
+
+    /**
+     * Возвращает изображение объявления по его идентификатору.
+     *
+     * @param adId Идентификатор объявления.
+     * @return Объект {@link Image}, представляющий изображение объявления.
+     * @throws IllegalArgumentException Если объявление не найден.
+     * @throws ImageNotFoundException   Если изображение не найдено.
+     */
     @Override
     public Image getImageByAd(Integer adId) {
         Ad ad = adRepository.findById(adId).orElseThrow(() ->
@@ -147,11 +234,16 @@ public class ImageServiceImpl implements ImageService {
         Image image = imageRepository.findByAd(ad).orElseThrow(() ->
                 new ImageNotFoundException("Image not found for user: " + adId));
 
-
         return image;
     }
-    private static String getExtensions(String fileName) {
 
+    /**
+     * Возвращает расширение файла.
+     *
+     * @param fileName Имя файла.
+     * @return Расширение файла.
+     */
+    private static String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 }
