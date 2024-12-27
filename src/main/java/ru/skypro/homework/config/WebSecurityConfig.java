@@ -26,7 +26,6 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/register",
             "/login",
-            "/avatar",
             "/images",
             "/ad_images"
     };
@@ -46,6 +45,19 @@ public class WebSecurityConfig {
                 .and()
                 .httpBasic(withDefaults());
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 

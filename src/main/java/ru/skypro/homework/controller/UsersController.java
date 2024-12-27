@@ -1,5 +1,7 @@
 package ru.skypro.homework.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +23,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/users")
 public class UsersController {
-
+    Logger logger = LoggerFactory.getLogger(UsersController.class);
     @Autowired
     private UserService userService;
-    @Autowired
-    private ImageService imageService;
 
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPassword newPassword) {
         // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUserEmail = authentication.getName(); // Используем username как идентификатор пользователя
 
         try {
             // Вызов сервиса для обновления пароля
@@ -42,16 +42,16 @@ public class UsersController {
         }
     }
     @GetMapping("/me")
-    public ResponseEntity<Optional<User>> getUser() {
+    public ResponseEntity<User> getUser() {
         // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUsername = authentication.getName(); // Используем username как идентификатор пользователя
 
         // Вызов сервиса для получения данных пользователя
-        Optional<User> user = userService.findUserByEmail(currentUserEmail);
+        User user = userService.findUserByUsername(currentUsername);
 
         // Проверка, что пользователь найден
-        if (user.isEmpty()) {
+        if (user == null) {
             throw new UnauthorizedException("User not found");
         }
 
@@ -63,32 +63,23 @@ public class UsersController {
     public ResponseEntity<User> updateUser(@RequestBody UpdateUser updateUser) {
         // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUsername = authentication.getName(); // Используем email как идентификатор пользователя
 
         // Вызов сервиса для обновления данных пользователя
-        User updatedUser = userService.updateUser(currentUserEmail, updateUser);
+        User updatedUser = userService.updateUser(currentUsername, updateUser);
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @PatchMapping("/me/image")
-    public ResponseEntity<String> updateUserImage(@RequestParam("image") MultipartFile image) {
-        try {
-            // Получение текущего пользователя из контекста безопасности
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String currentUserEmail = authentication.getName();
-
-            // Вызов сервиса для обновления изображения пользователя
-            userService.updateUserImage(currentUserEmail, image);
-
-            // Возвращаем успешный ответ
-            return ResponseEntity.ok("Image updated successfully");
-        } catch (UserNotFoundException e) {
-            // Обработка случая, если пользователь не найден
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            // Обработка других ошибок
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update image");
+    public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile image, Authentication authentication) {
+        logger.info("Вошли в метод uploadUserImage, класса UserController. Принят файл image: " + image.toString());
+        if (authentication != null) {
+            logger.info("Пользователь обнаружен");
+            userService.updateUserImage(authentication.getName(), image);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 }

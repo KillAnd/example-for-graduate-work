@@ -1,71 +1,94 @@
 package ru.skypro.homework.mapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.model.User;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 
+import java.util.Base64;
 import java.util.List;
 
 @Component
-public class AdMapperImpl implements AdsMapper, ExtendedAdMapper , CreateOrUpdateAdMapper {
+public class AdMapperImpl {
+    private final UserRepository userRepository;
+    private final AdRepository adRepository;
 
-    @Override
+    public AdMapperImpl(UserRepository userRepository, AdRepository adRepository) {
+        this.userRepository = userRepository;
+        this.adRepository = adRepository;
+    }
+
+    public Ad toAdEntity(CreateOrUpdateAd ad,
+                               String filePath,
+                               String username) {
+        if (ad == null) {
+            throw new AdNotFoundException("Переданный объект Ad is null");
+        }
+        Ad adEntity = new Ad();
+        adEntity.setPrice(ad.getPrice());
+        adEntity.setTitle(ad.getTitle());
+        adEntity.setDescription(ad.getDescription());
+        adEntity.setImage(filePath);
+        adEntity.setUserAd(userRepository.findByUsername(username));
+        return adEntity;
+    }
+
+    public Ad toAd(CreateOrUpdateAd ad,
+                   String filePath,
+                   String username) {
+        if (ad == null) {
+            throw new AdNotFoundException("Переданный объект Ad is null");
+        }
+        Ad adEntity = new Ad();
+        adEntity.setPrice(ad.getPrice());
+        adEntity.setTitle(ad.getTitle());
+        adEntity.setDescription(ad.getDescription());
+        adEntity.setImage(filePath);
+        adEntity.setUserAd(userRepository.findByUsername(username));
+        return adEntity;
+    }
+
+    public Ad toAdDto(Ad adEntity) {
+        if (adEntity == null) {
+            throw new AdNotFoundException("Переданный объект AdEntity is null");
+        }
+        Ad ad = new Ad();
+        ad.setAuthor(adEntity.getUserAd().getId());
+        ad.setImage(adEntity.getImage());
+        ad.setPk(adEntity.getPk());
+        ad.setPrice(adEntity.getPrice());
+        ad.setTitle(adEntity.getTitle());
+        return ad;
+    }
+
+    public ExtendedAd toExtendedAd(Ad adEntity) {
+        if (adEntity == null) {
+            throw new AdNotFoundException("Переданный объект AdEntity is null");
+        }
+        ExtendedAd extendedAd = new ExtendedAd();
+        extendedAd.setPk(adEntity.getPk());
+        extendedAd.setAuthorFirstName(adEntity.getUserAd().getFirstName());
+        extendedAd.setAuthorLastName(adEntity.getUserAd().getLastName());
+        extendedAd.setDescription(adEntity.getDescription());
+        extendedAd.setEmail(adEntity.getUserAd().getUsername());
+        extendedAd.setImage(adEntity.getImage());
+        extendedAd.setPhone(adEntity.getUserAd().getPhone());
+        extendedAd.setPrice(adEntity.getPrice());
+        extendedAd.setTitle(adEntity.getTitle());
+        return extendedAd;
+    }
+
     public Ads mapToAds(List<Ad> ads) {
         Ads dto = new Ads();
         dto.setCount(ads.size());
-        dto.setResults(ads);
+        dto.setResults(ads.toArray(new Ad[0]));
         return dto;
-    }
-
-    @Override
-    public List<Ad> mapFromAds(Ads ads) {
-        return ads.getResults();
-    }
-
-    @Override
-    public ExtendedAd mapToExtendedAd(User user, Ad ad) {
-        ExtendedAd dto = new ExtendedAd();
-        dto.setAdId(ad.getAdId());
-        dto.setAuthorFirstName(user.getFirstName());
-        dto.setAuthorLastName(user.getLastName());
-        dto.setDescription(ad.getDescription());
-        dto.setEmail(user.getEmail());
-        dto.setImage(ad.getImageAd());
-        dto.setPhone(user.getPhone());
-        dto.setPrice(ad.getPrice());
-        dto.setTitle(ad.getTitle());
-        return dto;
-    }
-
-    @Override
-    public Ad mapFromExtendedAd(ExtendedAd extendedAd) {
-        Ad ad = new Ad();
-        ad.setAdId(extendedAd.getAdId());
-        ad.setTitle(extendedAd.getTitle());
-        ad.setPrice(extendedAd.getPrice());
-        ad.setDescription(extendedAd.getDescription());
-        ad.setImageAd(extendedAd.getImage());
-        return ad;
-    }
-
-    @Override
-    public CreateOrUpdateAd mapToCreateOrUpdateAd(Ad ad) {
-        CreateOrUpdateAd dto = new CreateOrUpdateAd();
-        dto.setTitle(ad.getTitle());
-        dto.setPrice(ad.getPrice());
-        dto.setDescription(ad.getDescription());
-        return dto;
-    }
-
-    @Override
-    public Ad mapFromCreateOrUpdateAd(CreateOrUpdateAd dto) {
-        Ad ad = new Ad();
-        ad.setTitle(dto.getTitle());
-        ad.setDescription(dto.getDescription());
-        ad.setPrice(dto.getPrice());
-        return ad;
     }
 }

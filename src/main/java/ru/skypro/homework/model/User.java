@@ -1,6 +1,6 @@
 package ru.skypro.homework.model;
 
-import ru.skypro.homework.dto.ImageDTO;
+import lombok.Data;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
@@ -11,150 +11,29 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+@Data
 @Entity
 @Table(name = "app_user")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private String email;
-    private String username;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id; //id пользователя
+    private String username; //логин пользователя
+    private String password;
     private String firstName;
     private String lastName;
-    private String phone;
     private Role role;
-    @OneToOne(mappedBy = "user")
-    private Image imageUser;
-    private String password;
+    private String phone;
+    private String image; //ссылка на его аватар
 
-    @OneToMany(mappedBy = "author")
-    private List<Ad> ads = new ArrayList<>();
+    @OneToMany(mappedBy = "userAd", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ad> adsListForUsers;
 
-    public User() {
-    }
+    @OneToMany(mappedBy = "userCom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentsListForUsers;
 
-    public User(int id, String email, String username, String firstName, String lastName, String phone,
-                Role role, Image imageUser, String password, List<Ad> ads) {
-        this.id = id;
-        this.email = email;
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.role = role;
-        this.imageUser = imageUser;
-        this.password = password;
-        this.ads = ads;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Image getImageUser() {
-        return imageUser;
-    }
-
-    public void setImageUser(Image imageUser) {
-        this.imageUser = imageUser;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Ad> getAds() {
-        return ads;
-    }
-
-    public void setAds(List<Ad> ads) {
-        this.ads = ads;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(phone, user.phone) && role == user.role && Objects.equals(imageUser, user.imageUser) && Objects.equals(password, user.password) && Objects.equals(ads, user.ads);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, username, firstName, lastName, phone, role, imageUser, password, ads);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phone='" + phone + '\'' +
-                ", role=" + role +
-                ", imageUser=" + imageUser +
-                ", password='" + password + '\'' +
-                ", ads=" + ads +
-                '}';
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_image_id", referencedColumnName = "id")
+    private Image imageUsers;
 }

@@ -1,7 +1,8 @@
 package ru.skypro.homework.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.ImageNotFoundException;
@@ -16,12 +17,13 @@ import ru.skypro.homework.service.ImageService;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-    private final int BUFFER_SIZE = 1024;
+    Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -29,129 +31,43 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
-    @Value("${path.to.image.folder}")
-    private String imageDir;
-
     @Override
-    public Image uploadUserImage(String userId, MultipartFile imageFile) throws IOException {
-        User user = userRepository.findByEmail(userId).orElseThrow(() ->
-                new IllegalArgumentException("User with id " + userId + " not found"));
+    public Image uploadImage(MultipartFile imageFile) throws IOException {
+        UUID uuid = UUID.randomUUID();
 
-        Path imagePath = saveToLocalDirectoryUser(user, imageFile);
-        Image image = saveToDataBasedUser(user, imagePath, imageFile);
-
-        return image;
-    }
-
-    @Override
-    public Path saveToLocalDirectoryUser(User user, MultipartFile imageFile) throws IOException {
-        Path imagePath = Path
-                .of(imageDir, user.getEmail() + "." + getExtensions(imageFile.getOriginalFilename()));
-        Files.createDirectories(imagePath.getParent());
-        Files.deleteIfExists(imagePath);
+        Image imageAdded = new Image();
+        imageAdded.setData(imageFile.getBytes());
+        imageAdded.setFileSize(imageFile.getSize());
+        logger.info("параметры фото изменены");
+        String filePathString = "/image/" + uuid + "." + getExtension(imageFile); //меняем путь
+        Path filePath = Path.of("image", uuid + "." + getExtension(imageFile));
+        logger.info("Путь изменен");
         try (
-                InputStream is = imageFile.getInputStream();
-                OutputStream os = Files.newOutputStream(imagePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, BUFFER_SIZE);
-                BufferedOutputStream bos = new BufferedOutputStream(os, BUFFER_SIZE);
+            InputStream is = imageFile.getInputStream();
+            OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+            BufferedInputStream bis = new BufferedInputStream(is, 1024);
+            BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
             bis.transferTo(bos);
         }
-
-        return imagePath;
-    }
-    @Override
-    public Image saveToDataBasedUser(User user, Path imagePath, MultipartFile imageFile) throws IOException {
-
-        Image image = getImageUser(user);
-        image.setUser(user);
-        image.setFilePath(imagePath.toString());
-        image.setFileSize(imageFile.getSize());
-        image.setMediaType(imageFile.getContentType());
-        image.setData(imageFile.getBytes());
-
-        return imageRepository.save(image);
-    }
-    @Override
-    public Image uploadAdImage(Integer adId, MultipartFile imageFile) throws IOException {
-        Ad ad = adRepository.findById(adId).orElseThrow(() ->
-                new IllegalArgumentException("User with id " + adId + " not found"));
-
-        Path imagePath = saveToLocalDirectoryAd(ad, imageFile);
-        Image image = saveToDataBasedAd(ad, imagePath, imageFile);
-
-        return image;
-    }
-    @Override
-    public Path saveToLocalDirectoryAd(Ad ad, MultipartFile imageFile) throws IOException {
-        Path imagePath = Path
-                .of(imageDir, ad.getAuthor() + "." + getExtensions(imageFile.getOriginalFilename()));
-        Files.createDirectories(imagePath.getParent());
-        Files.deleteIfExists(imagePath);
-        try (
-                InputStream is = imageFile.getInputStream();
-                OutputStream os = Files.newOutputStream(imagePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, BUFFER_SIZE);
-                BufferedOutputStream bos = new BufferedOutputStream(os, BUFFER_SIZE);
-        ) {
-            bis.transferTo(bos);
+        catch (IOException e) {
+            logger.info("Потоки не прошли");
         }
+        logger.info("Файл успешно сохранён на диск. Полное имя файла: {}", filePathString);
 
-        return imagePath;
-    }
-    @Override
-    public Image saveToDataBasedAd(Ad ad, Path imagePath, MultipartFile imageFile) throws IOException {
+        imageAdded.setFilePath(filePathString);
+        Image savedImage = imageRepository.save(imageAdded);
+        logger.info("Изображение загрузилось в базу данных");
 
-        Image image = getImageAd(ad);
-        image.setAd(ad);
-        image.setFilePath(imagePath.toString());
-        image.setFileSize(imageFile.getSize());
-        image.setMediaType(imageFile.getContentType());
-        image.setData(imageFile.getBytes());
-
-        return imageRepository.save(image);
-    }
-    @Override
-    public Image getImageUser(User user) {
-        return imageRepository.findByUser(user).orElseGet(() -> {
-            Image image = new Image();
-            image.setUser(user);
-            return image;
-        });
-    }
-    @Override
-    public Image getImageAd(Ad ad) {
-        return imageRepository.findByAd(ad).orElseGet(() -> {
-            Image image = new Image();
-            image.setAd(ad);
-            return image;
-        });
+        return savedImage;
     }
 
     @Override
-    public Image getImageByUser(String userId) {
-        User user = userRepository.findByEmail(userId).orElseThrow(() ->
-                new IllegalArgumentException("User with id " + userId + " not found"));
-
-        Image image = imageRepository.findByUser(user).orElseThrow(() ->
-                new ImageNotFoundException("Image not found for user: " + userId));
-
-
-        return image;
-    }
-    @Override
-    public Image getImageByAd(Integer adId) {
-        Ad ad = adRepository.findById(adId).orElseThrow(() ->
-                new IllegalArgumentException("User with id " + adId + " not found"));
-
-        Image image = imageRepository.findByAd(ad).orElseThrow(() ->
-                new ImageNotFoundException("Image not found for user: " + adId));
-
-
-        return image;
-    }
-    private static String getExtensions(String fileName) {
-
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    public String getExtension(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        if (fileName != null && !fileName.isBlank() && fileName.contains(".")) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
+        }
+        throw new RuntimeException("Название файла не валидно");
     }
 }

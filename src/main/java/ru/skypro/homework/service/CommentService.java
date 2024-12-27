@@ -9,10 +9,10 @@ import java.util.List;
 public interface CommentService {
     Comments getCommentsById(int id);
 
-    public Comment addComment(Integer adId, CreateOrUpdateComment createOrUpdateComment);
+    Comment addComment(Integer adId, CreateOrUpdateComment createOrUpdateComment);
 
-    public void deleteComment(Integer adId, Integer commentId);
+    void deleteComment(Integer adId, Integer commentId);
 
-    public Comment updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment);
+    Comment updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment);
 
 }
