@@ -2,17 +2,57 @@ package ru.skypro.homework.dto;
 
 import ru.skypro.homework.model.Image;
 
+/**
+ * Класс, представляющий расширенную информацию об объявлении.
+ * Содержит данные об авторе, изображении, цене, заголовке, описании и контактной информации.
+ */
 public class ExtendedAd {
 
+    /**
+     * Уникальный идентификатор объявления.
+     */
     private int adId;
+
+    /**
+     * Имя автора объявления.
+     */
     private String authorFirstName;
+
+    /**
+     * Фамилия автора объявления.
+     */
     private String authorLastName;
+
+    /**
+     * Описание объявления.
+     */
     private String description;
+
+    /**
+     * Email автора объявления.
+     */
     private String email;
+
+    /**
+     * Изображение, связанное с объявлением.
+     */
     private Image image;
+
+    /**
+     * Номер телефона автора объявления.
+     */
     private String phone;
+
+    /**
+     * Цена объявления.
+     */
     private int price;
+
+    /**
+     * Заголовок объявления.
+     */
     private String title;
+
 
     public ExtendedAd() {
     }

@@ -4,10 +4,22 @@ import ru.skypro.homework.model.Comment;
 
 import java.util.List;
 
+/**
+ * Класс, представляющий коллекцию комментариев.
+ * Содержит общее количество комментариев и список самих комментариев.
+ */
 public class Comments {
 
+    /**
+     * Общее количество комментариев.
+     */
     private int count;
+
+    /**
+     * Список комментариев.
+     */
     private List<Comment> results;
+
 
     public Comments() {
     }

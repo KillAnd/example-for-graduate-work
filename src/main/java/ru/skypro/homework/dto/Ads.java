@@ -3,10 +3,22 @@ import ru.skypro.homework.model.Ad;
 
 import java.util.List;
 
+/**
+ * Класс, представляющий коллекцию объявлений.
+ * Содержит общее количество объявлений и список самих объявлений.
+ */
 public class Ads {
 
+    /**
+     * Общее количество объявлений.
+     */
     private int count;
+
+    /**
+     * Список объявлений.
+     */
     private List<Ad> results;
+
 
     public Ads() {
     }
