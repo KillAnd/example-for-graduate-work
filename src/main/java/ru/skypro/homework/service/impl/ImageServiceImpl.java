@@ -40,9 +40,10 @@ public class ImageServiceImpl implements ImageService {
         imageAdded.setFileSize(imageFile.getSize());
         imageAdded.setMediaType(imageFile.getContentType());
         logger.info("параметры фото изменены");
-        String filePathString = "/image/" + uuid + "." + getExtension(imageFile); //меняем путь
-        Path filePath = Path.of("image", uuid + "." + getExtension(imageFile));
+        Path filePath = Path.of("/image", uuid + "." + getExtension(imageFile));
         logger.info("Путь изменен");
+        Files.createDirectories(filePath.getParent());
+        Files.deleteIfExists(filePath);
         try (
             InputStream is = imageFile.getInputStream();
             OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
@@ -54,9 +55,9 @@ public class ImageServiceImpl implements ImageService {
         catch (IOException e) {
             logger.info("Потоки не прошли");
         }
-        logger.info("Файл успешно сохранён на диск. Полное имя файла: {}", filePathString);
+        logger.info("Файл успешно сохранён на диск. Полное имя файла: {}", filePath);
 
-        imageAdded.setFilePath(filePathString);
+        imageAdded.setFilePath(filePath.toString());
         Image savedImage = imageRepository.save(imageAdded);
         logger.info("Изображение загрузилось в базу данных");
 

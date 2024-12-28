@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
                 // Используем ImageService для сохранения изображения
                 Image imageAdded = imageService.uploadImage(image);
                 logger.info("Отправка в image service прошла успешно");
-                userRepository.saveImagePath(imageAdded.getFilePath(), username);
+                userFind.setImage(imageAdded.getFilePath());
                 logger.info("Изображение сохранилось в базу данных");
                 userFind.setImageUsers(imageAdded);
                 userRepository.save(userFind);
