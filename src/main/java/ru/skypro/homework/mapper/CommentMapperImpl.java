@@ -11,6 +11,7 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.time.Instant;
+import java.util.List;
 
 @Component
 public class CommentMapperImpl {
@@ -60,14 +61,14 @@ public class CommentMapperImpl {
         return comment;
     }
 
-    public Comments mapToDto(Comment[] comments) {
+    public Comments mapToDto(List<Comment> comments) {
         Comments dto = new Comments();
-        dto.setCount(comments.length);
+        dto.setCount(comments.size());
         dto.setResults(comments);
         return dto;
     }
 
-    public Comment[] mapFromDto(Comments comments) {
+    public List<Comment> mapFromDto(Comments comments) {
         return comments.getResults();
     }
 

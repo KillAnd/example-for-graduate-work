@@ -8,7 +8,7 @@ import ru.skypro.homework.model.Comment;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
-    Comment[] findById(int id);
-    @Query("SELECT c FROM Comment c WHERE c.ad.id = :adId AND c.id = :commentId")
+    List<Comment> findById(int id);
+    @Query("SELECT c FROM Comment c WHERE c.adCom.id = :adId AND c.id = :commentId")
     Comment findByAdIdAndId(@Param("adId") Integer adId, @Param("commentId") Integer commentId);
 }

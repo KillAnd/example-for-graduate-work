@@ -23,7 +23,7 @@ public class CommentsController {
 
     @GetMapping("/{id}/comments")  // получение комментариев объявления
     public ResponseEntity <?> getComments(@PathVariable("adId") Integer adId) {
-        Comment[] comments = commentService.getCommentsById(adId).getResults();
+        List<Comment> comments = commentService.getCommentsById(adId).getResults();
         return ResponseEntity.ok(comments);
     }
 
