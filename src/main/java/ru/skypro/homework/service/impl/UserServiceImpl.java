@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
@@ -30,6 +31,9 @@ public class UserServiceImpl implements UserService {
     private ImageService imageService;
 
     @Autowired
+    private PasswordEncoder encoder;
+
+    @Autowired
     private UserMapperImpl userMapper;
 
     @Override
@@ -53,7 +57,7 @@ public class UserServiceImpl implements UserService {
                 throw new NewPasswordException("Current password is incorrect");
             }
             // Установка нового пароля
-            userUpdated.setPassword(newPassword.getNewPassword()); // Предполагается, что пароль уже захеширован
+            userUpdated.setPassword(encoder.encode(newPassword.getNewPassword()));
             userRepository.save(userUpdated);
         } else {
             throw new UserNotFoundException("User not found with id: " + username);
