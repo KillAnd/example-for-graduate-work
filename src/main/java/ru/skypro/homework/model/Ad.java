@@ -26,7 +26,7 @@ public class Ad {
     @JoinColumn(name = "user_id")
     private User userAd; //связь user
 
-    @OneToMany(mappedBy = "adCom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @OneToOne(fetch = FetchType.LAZY)
