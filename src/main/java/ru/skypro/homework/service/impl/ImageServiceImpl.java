@@ -21,16 +21,31 @@ import java.util.UUID;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
+/**
+ * Реализация сервиса для работы с изображениями.
+ * Этот класс предоставляет методы для загрузки изображений и получения их расширений.
+ */
 @Service
 public class ImageServiceImpl implements ImageService {
-    Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AdRepository adRepository;
+
     @Autowired
     private ImageRepository imageRepository;
 
+    /**
+     * Загружает изображение на сервер и сохраняет его в базе данных.
+     *
+     * @param imageFile файл изображения
+     * @return сохраненное изображение
+     * @throws IOException если произошла ошибка при загрузке изображения
+     */
     @Override
     public Image uploadImage(MultipartFile imageFile) throws IOException {
         UUID uuid = UUID.randomUUID();
@@ -45,10 +60,10 @@ public class ImageServiceImpl implements ImageService {
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
-            InputStream is = imageFile.getInputStream();
-            OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-            BufferedInputStream bis = new BufferedInputStream(is, 1024);
-            BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
+                InputStream is = imageFile.getInputStream();
+                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
             bis.transferTo(bos);
         }
@@ -64,6 +79,13 @@ public class ImageServiceImpl implements ImageService {
         return savedImage;
     }
 
+    /**
+     * Возвращает расширение файла.
+     *
+     * @param file файл, для которого нужно получить расширение
+     * @return расширение файла
+     * @throws RuntimeException если имя файла не валидно
+     */
     @Override
     public String getExtension(MultipartFile file) {
         String fileName = file.getOriginalFilename();

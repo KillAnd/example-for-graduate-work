@@ -12,19 +12,38 @@ import ru.skypro.homework.repository.UserRepository;
 
 import java.util.List;
 
+/**
+ * Реализация маппера для преобразования между сущностью Ad и её DTO представлениями.
+ * Этот класс предоставляет методы для преобразования объектов CreateOrUpdateAd, Ads и ExtendedAd
+ * в сущность Ad и наоборот.
+ */
 @Component
 public class AdMapperImpl {
+
     private final UserRepository userRepository;
     private final AdRepository adRepository;
 
+    /**
+     * Конструктор для инициализации маппера.
+     *
+     * @param userRepository репозиторий для работы с пользователями
+     * @param adRepository   репозиторий для работы с объявлениями
+     */
     public AdMapperImpl(UserRepository userRepository, AdRepository adRepository) {
         this.userRepository = userRepository;
         this.adRepository = adRepository;
     }
 
-    public Ad toAdEntity(CreateOrUpdateAd ad,
-                               String filePath,
-                               User user) {
+    /**
+     * Преобразует объект CreateOrUpdateAd в сущность Ad.
+     *
+     * @param ad      объект CreateOrUpdateAd, содержащий данные для создания или обновления объявления
+     * @param filePath путь к файлу изображения
+     * @param user    пользователь, создавший объявление
+     * @return сущность Ad
+     * @throws AdNotFoundException если переданный объект ad равен null
+     */
+    public Ad toAdEntity(CreateOrUpdateAd ad, String filePath, User user) {
         if (ad == null) {
             throw new AdNotFoundException("Переданный объект Ad is null");
         }
@@ -38,9 +57,16 @@ public class AdMapperImpl {
         return adEntity;
     }
 
-    public Ad toAd(CreateOrUpdateAd ad,
-                   String filePath,
-                   String username) {
+    /**
+     * Преобразует объект CreateOrUpdateAd в сущность Ad.
+     *
+     * @param ad      объект CreateOrUpdateAd, содержащий данные для создания или обновления объявления
+     * @param filePath путь к файлу изображения
+     * @param username имя пользователя, создавшего объявление
+     * @return сущность Ad
+     * @throws AdNotFoundException если переданный объект ad равен null
+     */
+    public Ad toAd(CreateOrUpdateAd ad, String filePath, String username) {
         if (ad == null) {
             throw new AdNotFoundException("Переданный объект Ad is null");
         }
@@ -53,6 +79,13 @@ public class AdMapperImpl {
         return adEntity;
     }
 
+    /**
+     * Преобразует сущность Ad в объект Ad.
+     *
+     * @param adEntity сущность Ad
+     * @return объект Ad
+     * @throws AdNotFoundException если переданный объект adEntity равен null
+     */
     public Ad toAdDto(Ad adEntity) {
         if (adEntity == null) {
             throw new AdNotFoundException("Переданный объект AdEntity is null");
@@ -66,6 +99,13 @@ public class AdMapperImpl {
         return ad;
     }
 
+    /**
+     * Преобразует сущность Ad в объект ExtendedAd.
+     *
+     * @param adEntity сущность Ad
+     * @return объект ExtendedAd
+     * @throws AdNotFoundException если переданный объект adEntity равен null
+     */
     public ExtendedAd toExtendedAd(Ad adEntity) {
         if (adEntity == null) {
             throw new AdNotFoundException("Переданный объект AdEntity is null");
@@ -83,6 +123,12 @@ public class AdMapperImpl {
         return extendedAd;
     }
 
+    /**
+     * Преобразует список сущностей Ad в объект Ads.
+     *
+     * @param ads список сущностей Ad
+     * @return объект Ads
+     */
     public Ads mapToAds(List<Ad> ads) {
         Ads dto = new Ads();
         dto.setCount(ads.size());

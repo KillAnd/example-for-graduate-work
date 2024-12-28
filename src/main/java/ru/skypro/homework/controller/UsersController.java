@@ -21,37 +21,53 @@ import ru.skypro.homework.service.UserService;
 
 import java.util.Optional;
 
+/**
+ * Контроллер для обработки запросов, связанных с пользователями.
+ * Предоставляет методы для обновления пароля, получения данных пользователя,
+ * обновления информации и изображения профиля.
+ */
 @RestController
 @RequestMapping("/users")
 public class UsersController {
-    Logger logger = LoggerFactory.getLogger(UsersController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
+
     @Autowired
     private UserService userService;
 
+    /**
+     * Обновляет пароль текущего пользователя.
+     *
+     * @param newPassword объект, содержащий текущий и новый пароль
+     * @return ResponseEntity с HTTP-статусом OK, если пароль успешно обновлен,
+     *         или BAD_REQUEST, если текущий пароль неверен
+     */
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPassword newPassword) {
-        // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Используем username как идентификатор пользователя
+        String currentUserEmail = authentication.getName();
 
         try {
-            // Вызов сервиса для обновления пароля
             userService.updatePassword(currentUserEmail, newPassword);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NewPasswordException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    /**
+     * Возвращает данные текущего пользователя.
+     *
+     * @return ResponseEntity с данными пользователя и HTTP-статусом OK,
+     *         или UNAUTHORIZED, если пользователь не найден
+     */
     @GetMapping("/me")
     public ResponseEntity<User> getUser() {
-        // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName(); // Используем username как идентификатор пользователя
+        String currentUsername = authentication.getName();
 
-        // Вызов сервиса для получения данных пользователя
         User user = userService.findUserByUsername(currentUsername);
 
-        // Проверка, что пользователь найден
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
@@ -59,20 +75,30 @@ public class UsersController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    // Метод для обновления информации об авторизованном пользователе
+    /**
+     * Обновляет информацию о текущем пользователе.
+     *
+     * @param updateUser объект, содержащий новые данные пользователя
+     * @return ResponseEntity с обновленными данными пользователя и HTTP-статусом OK
+     */
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
-        // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName(); // Используем email как идентификатор пользователя
+        String currentUsername = authentication.getName();
 
-        // Вызов сервиса для обновления данных пользователя
         UpdateUser user = userService.updateUser(currentUsername, updateUser);
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PatchMapping(value= "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    /**
+     * Обновляет изображение профиля текущего пользователя.
+     *
+     * @param image файл изображения
+     * @return ResponseEntity с HTTP-статусом OK, если изображение успешно обновлено,
+     *         или UNAUTHORIZED, если пользователь не авторизован
+     */
+    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile image) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Вошли в метод uploadUserImage, класса UserController. Принят файл image: " + image.toString());

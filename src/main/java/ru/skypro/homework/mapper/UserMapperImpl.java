@@ -7,9 +7,21 @@ import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.User;
 
+/**
+ * Реализация маппера для преобразования между сущностью User и её DTO представлениями.
+ * Этот класс предоставляет методы для преобразования объектов Register, UserDTO и UpdateUser
+ * в сущность User и наоборот.
+ */
 @Component
 public class UserMapperImpl {
 
+    /**
+     * Преобразует объект Register в сущность User.
+     *
+     * @param register объект Register, содержащий данные для регистрации
+     * @return сущность User
+     * @throws NullPointerException если переданный объект register равен null
+     */
     public User toUserEntity(Register register) {
         if (register == null) {
             throw new NullPointerException("Переданный объект register is null");
@@ -24,7 +36,13 @@ public class UserMapperImpl {
         return userEntity;
     }
 
-    // Маппинг из UserEntity в User DTO
+    /**
+     * Преобразует сущность User в объект UserDTO.
+     *
+     * @param userEntity сущность User
+     * @return объект UserDTO
+     * @throws NullPointerException если переданный объект userEntity равен null
+     */
     public UserDTO toUserDto(User userEntity) {
         if (userEntity == null) {
             throw new NullPointerException("Переданный объект userEntity is null");
@@ -41,6 +59,13 @@ public class UserMapperImpl {
         return userDto;
     }
 
+    /**
+     * Преобразует сущность User в объект UpdateUser.
+     *
+     * @param userEntity сущность User
+     * @return объект UpdateUser
+     * @throws NullPointerException если переданный объект userEntity равен null
+     */
     public UpdateUser mapToUpdateUser(User userEntity) {
         if (userEntity == null) {
             throw new NullPointerException("Переданный объект userEntity is null");
@@ -52,6 +77,13 @@ public class UserMapperImpl {
         return updateUser;
     }
 
+    /**
+     * Преобразует объект UpdateUser в сущность User.
+     *
+     * @param userUpdate объект UpdateUser
+     * @return сущность User
+     * @throws NullPointerException если переданный объект userUpdate равен null
+     */
     public User mapFromUpdateUser(UpdateUser userUpdate) {
         if (userUpdate == null) {
             throw new NullPointerException("Переданный объект userEntity is null");
