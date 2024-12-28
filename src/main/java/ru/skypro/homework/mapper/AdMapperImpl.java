@@ -88,7 +88,7 @@ public class AdMapperImpl {
     public Ads mapToAds(List<Ad> ads) {
         Ads dto = new Ads();
         dto.setCount(ads.size());
-        dto.setResults(ads.toArray(new Ad[0]));
+        dto.setResults(ads);
         return dto;
     }
 }
