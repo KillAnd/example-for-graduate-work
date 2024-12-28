@@ -11,15 +11,14 @@ import java.util.Optional;
 public interface UserService {
 
 
-    boolean checkCurrentPassword(String email, String currentPassword);
-    void updatePassword(String email, NewPassword newPassword);
+    boolean checkCurrentPassword(String username, String currentPassword);
+    void updatePassword(String username, NewPassword newPassword);
 
-    Optional<User> findUserByEmail(String email);
+    Optional<User> findUserById(Integer id);
+    User findUserByUsername(String username);
 
-    Optional<User> findUserById(Long id);
-
-    User updateUser(String email, UpdateUser updateUser);
-    void updateUserImage(String email, MultipartFile image);
+    User updateUser(String username, UpdateUser updateUser);
+    void updateUserImage(String username, MultipartFile image);
 
 
 }
