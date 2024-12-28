@@ -22,13 +22,14 @@ public class CommentsController {
     }
 
     @GetMapping("/{id}/comments")  // получение комментариев объявления
-    public ResponseEntity <?> getComments(@PathVariable("adId") Integer adId) {
+    public ResponseEntity <List<Comment>> getComments(@PathVariable("adId") Integer adId) {
         List<Comment> comments = commentService.getCommentsById(adId).getResults();
         return ResponseEntity.ok(comments);
     }
 
-    @PostMapping("/{id}/comments")  // добавление комментариев к объявлению
-    public ResponseEntity<Comment> addComment(@PathVariable("adId") Integer adId, @RequestBody CreateOrUpdateComment createComment) {
+    @PostMapping("{id}/comments")  // добавление комментариев к объявлению
+    public ResponseEntity<Comment> addComment(@PathVariable("id") Integer adId,
+                                              @RequestBody CreateOrUpdateComment createComment) {
         Comment newComment = commentService.addComment(adId, createComment);
         return ResponseEntity.ok(newComment);
     }

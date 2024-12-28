@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -38,6 +39,7 @@ public class Image {
      * Данные изображения в виде массива байтов.
      */
     @Column(name = "data")
+    @Type(type="org.hibernate.type.BinaryType")
     @Basic(fetch = FetchType.LAZY)
     private byte[] data;
 }

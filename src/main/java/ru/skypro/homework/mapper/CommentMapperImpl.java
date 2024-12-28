@@ -1,5 +1,10 @@
 package ru.skypro.homework.mapper;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.CommentDTO;
 import ru.skypro.homework.dto.Comments;
@@ -20,6 +25,7 @@ import java.util.List;
  */
 @Component
 public class CommentMapperImpl {
+    private final Logger logger = LoggerFactory.getLogger(CommentMapperImpl.class);
 
     private final UserRepository userRepository;
     private final AdRepository adRepository;
@@ -57,7 +63,7 @@ public class CommentMapperImpl {
         commentEntity.setAuthorImage(userEntity.getImage());
         commentEntity.setAuthorFirstName(userEntity.getFirstName());
         commentEntity.setCreatedAt(Instant.now().toEpochMilli());
-        commentEntity.setText(createOrUpdateComment.getTextComment());
+        commentEntity.setText(createOrUpdateComment.getText());
         commentEntity.setUserCom(userEntity);
         commentEntity.setAd(adEntity);
         return commentEntity;
@@ -110,13 +116,13 @@ public class CommentMapperImpl {
     /**
      * Обновляет сущность Comment на основе объекта CreateOrUpdateComment.
      *
-     * @param comment                сущность Comment для обновления
+     * @param comment               сущность Comment для обновления
      * @param createOrUpdateComment объект CreateOrUpdateComment, содержащий новые данные
      * @return обновленная сущность Comment
      */
     public Comment mapToCreateOrUpdateComment(Comment comment, CreateOrUpdateComment createOrUpdateComment) {
         if (createOrUpdateComment != null) {
-            comment.setText(createOrUpdateComment.getTextComment());
+            comment.setText(createOrUpdateComment.getText());
         }
         return comment;
     }
@@ -124,16 +130,27 @@ public class CommentMapperImpl {
     /**
      * Создает сущность Comment на основе объекта CreateOrUpdateComment и идентификатора объявления.
      *
-     * @param adId                   идентификатор объявления
+     * @param adId                  идентификатор объявления
      * @param createOrUpdateComment объект CreateOrUpdateComment, содержащий данные для создания комментария
      * @return сущность Comment
      */
     public Comment mapInComment(Integer adId, CreateOrUpdateComment createOrUpdateComment) {
+        logger.info("Сущность АД номер объявления {}", adId);
+
         Comment comment = new Comment();
         if (createOrUpdateComment != null) {
-            comment.setAuthor(adId);
-            comment.setText(createOrUpdateComment.getTextComment());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User author = userRepository.findByUsername(authentication.getName());
+            comment.setAuthor(author.getId());
+            comment.setUserCom(author);
+            comment.setText(createOrUpdateComment.getText());
+            Ad ad = adRepository.findAdByPk(adId);
+            logger.info("Сущность АД номер объявления {}", ad);
+            comment.setAd(ad);
+            logger.info("комментарий {}", comment);
         }
+
         return comment;
+
     }
 }

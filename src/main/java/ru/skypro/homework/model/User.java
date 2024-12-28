@@ -1,5 +1,6 @@
 package ru.skypro.homework.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
 import ru.skypro.homework.dto.Role;
@@ -80,6 +81,7 @@ public class User {
      * Изображение, связанное с пользователем.
      * Связь с сущностью Image.
      */
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_image_id", referencedColumnName = "id")
     private Image imageUsers;
