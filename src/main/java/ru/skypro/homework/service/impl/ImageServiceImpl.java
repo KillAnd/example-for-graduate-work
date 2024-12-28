@@ -38,6 +38,7 @@ public class ImageServiceImpl implements ImageService {
         Image imageAdded = new Image();
         imageAdded.setData(imageFile.getBytes());
         imageAdded.setFileSize(imageFile.getSize());
+        imageAdded.setMediaType(imageFile.getContentType());
         logger.info("параметры фото изменены");
         String filePathString = "/image/" + uuid + "." + getExtension(imageFile); //меняем путь
         Path filePath = Path.of("image", uuid + "." + getExtension(imageFile));

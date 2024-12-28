@@ -11,6 +11,7 @@ import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.mapper.AdMapperImpl;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.Image;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
@@ -44,13 +45,14 @@ public class AdsServiceImpl implements AdsService {
 
     public Ad createAd(CreateOrUpdateAd adProperties,
                        MultipartFile image,
-                       String username) throws IOException {
+                       User user) throws IOException {
         logger.info("Вошли в метод addAd сервиса AdServiceImpl. " +
                 "Получены данные (объект) createAD: {}." +
                 "Файл объявления {}." +
-                "Имя авторизированного пользователя: {}", adProperties, image.getOriginalFilename(), username);
+                "Имя авторизированного пользователя: {}", adProperties, image.getOriginalFilename(), user);
         Image uploadImage = imageService.uploadImage(image);
-        Ad adEntity = adMapper.toAdEntity(adProperties, uploadImage.getFilePath(), username);
+        Ad adEntity = adMapper.toAdEntity(adProperties, uploadImage.getFilePath(), user);
+        adEntity.setImageAd(uploadImage);
         logger.info("Получена сущность: {}", adEntity);
         adRepository.save(adEntity);
         logger.info("Сущность сохранена в БД");

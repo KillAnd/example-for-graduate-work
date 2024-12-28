@@ -41,7 +41,7 @@ public class CommentMapperImpl {
         commentEntity.setCreatedAt(Instant.now().toEpochMilli());
         commentEntity.setText(createOrUpdateComment.getTextComment());
         commentEntity.setUserCom(userEntity);
-        commentEntity.setAdCom(adEntity);
+        commentEntity.setAd(adEntity);
         return commentEntity;
     }
 

@@ -27,7 +27,7 @@ public class AdMapperImpl {
 
     public Ad toAdEntity(CreateOrUpdateAd ad,
                                String filePath,
-                               String username) {
+                               User user) {
         if (ad == null) {
             throw new AdNotFoundException("Переданный объект Ad is null");
         }
@@ -36,7 +36,8 @@ public class AdMapperImpl {
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
         adEntity.setImage(filePath);
-        adEntity.setUserAd(userRepository.findByUsername(username));
+        adEntity.setAuthor(user.getId());
+        adEntity.setUserAd(user);
         return adEntity;
     }
 

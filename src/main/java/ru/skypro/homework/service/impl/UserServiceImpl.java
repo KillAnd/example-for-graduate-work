@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
-    Logger logger;
+    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -96,7 +97,8 @@ public class UserServiceImpl implements UserService {
                 logger.info("Отправка в image service прошла успешно");
                 userRepository.saveImagePath(imageAdded.getFilePath(), username);
                 logger.info("Изображение сохранилось в базу данных");
-
+                userFind.setImageUsers(imageAdded);
+                userRepository.save(userFind);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to update user image", e);
             }

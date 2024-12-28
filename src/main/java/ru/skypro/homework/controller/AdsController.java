@@ -18,6 +18,7 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.model.User;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
@@ -35,10 +36,12 @@ public class AdsController {
     Logger logger = LoggerFactory.getLogger(AdsController.class);
 
     private final AdsService adsService;
+    private final UserRepository userRepository;
 
 
-    public AdsController(AdsService adsService) {
+    public AdsController(AdsService adsService, UserRepository userRepository) {
         this.adsService = adsService;
+        this.userRepository = userRepository;
     }
 
     //Получение всех объявлений
@@ -49,20 +52,33 @@ public class AdsController {
 
     //Добавление объявления
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
-                                   @RequestPart("image") MultipartFile image,
-                                   @AuthenticationPrincipal User user) {
+    public ResponseEntity<Ad> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
+                                    @RequestPart("image") MultipartFile image,
+                                    Authentication authentication) {
         logger.info("Зашли в метод по добавлению объявления");
+        User user = userRepository.findByUsername(authentication.getName());
+        // Проверка аутентификации пользователя
         if (user == null) {
+            logger.warn("Пользователь не аутентифицирован");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Ad createdAd = null;
-        try {
-            createdAd = adsService.createAd(ad, image, user.getUsername());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        // Проверка, был ли передан файл
+        if (image == null || image.isEmpty()) {
+            logger.warn("Файл изображения не был передан");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
+        // Создание объявления
+        Ad createdAd;
+        try {
+            createdAd = adsService.createAd(ad, image, user);
+            logger.info("Объявление успешно создано: {}", createdAd.getTitle());
+        } catch (IOException e) {
+            logger.error("Ошибка при создании объявления", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAd);
     }
 

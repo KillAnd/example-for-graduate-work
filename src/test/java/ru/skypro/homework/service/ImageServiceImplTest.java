@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ImageDTO;
 import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
@@ -58,7 +57,7 @@ public class ImageServiceImplTest {
         imageDTO.setMediaType(imageFile.getContentType());
 
         // Мокирование репозиториев и маппера
-        when(userRepository.findByEmail(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(userId)).thenReturn(Optional.of(user));
         when(imageRepository.save(any(Image.class))).thenReturn(image);
 
         // Выполнение теста
@@ -78,7 +77,7 @@ public class ImageServiceImplTest {
         MultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image".getBytes());
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(userId)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(userId)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(IllegalArgumentException.class, () -> {
@@ -146,7 +145,7 @@ public class ImageServiceImplTest {
         image.setUser(user);
 
         // Мокирование репозитория
-        when(imageRepository.findByUser(user)).thenReturn(Optional.of(image));
+        when(imageRepository.findByUserImage(user)).thenReturn(Optional.of(image));
 
         // Выполнение теста
         Image result = imageService.getImageUser(user);
@@ -164,7 +163,7 @@ public class ImageServiceImplTest {
         user.setEmail(userId);
 
         // Мокирование репозитория
-        when(imageRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(imageRepository.findByUserImage(user)).thenReturn(Optional.empty());
 
         // Выполнение теста
         Image result = imageService.getImageUser(user);
@@ -190,8 +189,8 @@ public class ImageServiceImplTest {
         imageDTO.setFilePath("path/to/image.jpg");
 
         // Мокирование репозиториев и маппера
-        when(userRepository.findByEmail(userId)).thenReturn(Optional.of(user));
-        when(imageRepository.findByUser(user)).thenReturn(Optional.of(image));
+        when(userRepository.findByUsername(userId)).thenReturn(Optional.of(user));
+        when(imageRepository.findByUserImage(user)).thenReturn(Optional.of(image));
 
         // Выполнение теста
         Image result = imageService.getImageByUser(userId);
@@ -207,7 +206,7 @@ public class ImageServiceImplTest {
         String userId = "test@example.com";
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(userId)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(userId)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(IllegalArgumentException.class, () -> {
@@ -223,8 +222,8 @@ public class ImageServiceImplTest {
         user.setEmail(userId);
 
         // Мокирование репозиториев
-        when(userRepository.findByEmail(userId)).thenReturn(Optional.of(user));
-        when(imageRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(userId)).thenReturn(Optional.of(user));
+        when(imageRepository.findByUserImage(user)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(ImageNotFoundException.class, () -> {

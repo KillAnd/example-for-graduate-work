@@ -1,6 +1,8 @@
 package ru.skypro.homework.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 @Data
 @Entity
+@ToString(exclude = {"author", "userAd", "comments", "imageAd"})
 public class Ad {
 
     @Id
@@ -18,7 +21,7 @@ public class Ad {
     private String title;
     private String image;
     private String description;
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User userAd; //связь user

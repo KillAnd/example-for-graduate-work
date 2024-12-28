@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import lombok.ToString;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "app_user")
+@ToString(exclude = {"adsListForUsers", "commentsListForUsers", "imageUsers"})
 public class User {
 
     @Id
