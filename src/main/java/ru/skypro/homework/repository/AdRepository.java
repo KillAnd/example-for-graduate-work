@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AdRepository extends JpaRepository<Ad, Integer> {
 
-    @Query(value = "UPDATE ad_entity SET description=:description, price=:price, title=:title WHERE pk=:id", nativeQuery = true)
+    @Query(value = "UPDATE ad SET description=:description, price=:price, title=:title WHERE pk=:id", nativeQuery = true)
     int updateInfoAboutAdByPk(int id, String description, Integer price, String title);
     List<Ad> findAdsByAuthor(int currentUserId);
 
@@ -17,6 +17,6 @@ public interface AdRepository extends JpaRepository<Ad, Integer> {
 
     Ad findAdEntityByImage(String filePath);
 
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM ad_entity WHERE pk = :id)", nativeQuery = true)
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM ad WHERE pk = :id)", nativeQuery = true)
     boolean existsAdByPk(int id);
 }
