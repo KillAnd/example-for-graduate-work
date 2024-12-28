@@ -7,6 +7,8 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 import java.util.List;
 
 public interface CommentService {
+
+
     Comments getCommentsById(int id);
 
     Comment addComment(Integer adId, CreateOrUpdateComment createOrUpdateComment);

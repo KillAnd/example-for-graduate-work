@@ -6,12 +6,14 @@ import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.Comment;
+
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CommentMapperImpl {
@@ -61,6 +63,8 @@ public class CommentMapperImpl {
         return comment;
     }
 
+
+
     public Comments mapToDto(List<Comment> comments) {
         Comments dto = new Comments();
         dto.setCount(comments.size());
@@ -75,7 +79,9 @@ public class CommentMapperImpl {
     public Comment mapToCreateOrUpdateComment(Comment comment, CreateOrUpdateComment createOrUpdateComment) {
         if (createOrUpdateComment != null) {
 
+
             comment.setText(createOrUpdateComment.getTextComment());
+
 
         }
         return comment;
