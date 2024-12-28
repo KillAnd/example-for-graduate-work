@@ -367,7 +367,7 @@ paths:
       tags:
         - Объявления
       summary: 'Обновление картинки объявления'
-      operationId: updateImage
+      operationId: updateAdImage
       parameters:
         - name: id
           in: path

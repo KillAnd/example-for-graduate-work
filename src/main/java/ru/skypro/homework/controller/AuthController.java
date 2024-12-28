@@ -43,8 +43,10 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Register register) {
         logger.info("Вход в метод register, класса AuthController. Принят объект register: {}", register.toString());
         if (authService.register(register)) {
+            logger.info("юзер создан");
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
+            logger.info("плохой реквест");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

@@ -40,7 +40,7 @@ public class AdsServiceImpl implements AdsService {
         List<Ad> adsList = adRepository.findAll().stream()
                 .map(adMapper::toAdDto)
                 .collect(Collectors.toList());
-        return new Ads(adsList.size(), adsList.toArray(Ad[]::new));
+        return new Ads(adsList.size(), adsList);
     }
 
     public Ad createAd(CreateOrUpdateAd adProperties,
@@ -72,7 +72,7 @@ public class AdsServiceImpl implements AdsService {
                 .filter(adEntity -> adEntity.getUserAd().getUsername().equals(authentication.getName()))
                 .map(adMapper::toAdDto)
                 .collect(Collectors.toList());
-        return new Ads(myAdsList.size(), myAdsList.toArray(Ad[]::new));
+        return new Ads(myAdsList.size(), myAdsList);
     }
 
 

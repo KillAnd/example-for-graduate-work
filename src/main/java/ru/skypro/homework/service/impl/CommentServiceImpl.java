@@ -6,15 +6,15 @@ import ru.skypro.homework.mapper.CommentMapperImpl;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.service.CommentService;
-
 import java.io.FileNotFoundException;
 
 @Service
 public class CommentServiceImpl implements CommentService {
 
-
     private final CommentMapperImpl commentMapper;
+
     private final CommentRepository commentRepository;
 
     public CommentServiceImpl(CommentMapperImpl commentMapper, CommentRepository commentRepository) {
@@ -53,5 +53,6 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.save(comment);
 
     }
+
 
 }
