@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean register(Register register) {
-        if (!manager.userExists(register.getUsername())) {
+        if (manager.userExists(register.getUsername())) {
             return false;
         }
         manager.createUser(
