@@ -10,53 +10,90 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация интерфейса UserDetails для предоставления информации о пользователе.
+ * Этот класс используется Spring Security для аутентификации и авторизации пользователей.
+ */
 public class MyUserDetails implements UserDetails {
 
     private final User user;
 
+    /**
+     * Конструктор для создания объекта MyUserDetails на основе сущности User.
+     *
+     * @param user сущность пользователя
+     */
     public MyUserDetails(User user) {
         this.user = user;
     }
 
+    /**
+     * Возвращает список ролей пользователя.
+     *
+     * @return коллекция объектов GrantedAuthority, представляющих роли пользователя
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Возвращаем роли пользователя
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
+    /**
+     * Возвращает пароль пользователя.
+     *
+     * @return зашифрованный пароль пользователя
+     */
     @Override
     public String getPassword() {
-        // Возвращаем зашифрованный пароль пользователя
         return user.getPassword();
     }
 
+    /**
+     * Возвращает имя пользователя (уникальный идентификатор).
+     *
+     * @return имя пользователя
+     */
     @Override
     public String getUsername() {
-        // Возвращаем уникальный идентификатор пользователя
         return user.getUsername();
     }
 
+    /**
+     * Указывает, не истек ли срок действия аккаунта пользователя.
+     *
+     * @return true, если срок действия аккаунта не истек, иначе false
+     */
     @Override
     public boolean isAccountNonExpired() {
-        // Указываем, что аккаунт не просрочен
         return true;
     }
 
+    /**
+     * Указывает, не заблокирован ли аккаунт пользователя.
+     *
+     * @return true, если аккаунт не заблокирован, иначе false
+     */
     @Override
     public boolean isAccountNonLocked() {
-        // Указываем, что аккаунт не заблокирован
         return true;
     }
 
+    /**
+     * Указывает, не истек ли срок действия учетных данных пользователя.
+     *
+     * @return true, если срок действия учетных данных не истек, иначе false
+     */
     @Override
     public boolean isCredentialsNonExpired() {
-        // Указываем, что учетные данные не просрочены
         return true;
     }
 
+    /**
+     * Указывает, активен ли аккаунт пользователя.
+     *
+     * @return true, если аккаунт активен, иначе false
+     */
     @Override
     public boolean isEnabled() {
-        // Указываем, что аккаунт активен
         return true;
     }
 }
