@@ -148,6 +148,8 @@ public class CommentMapperImpl {
             logger.info("Сущность АД номер объявления {}", ad);
             comment.setAd(ad);
             logger.info("комментарий {}", comment);
+            Long time = System.currentTimeMillis();
+            comment.setCreatedAt(time);
         }
 
         return comment;
