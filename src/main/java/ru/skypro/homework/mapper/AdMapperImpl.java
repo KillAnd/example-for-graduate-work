@@ -1,18 +1,14 @@
 package ru.skypro.homework.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
-import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 
-import java.util.Base64;
 import java.util.List;
 
 @Component
