@@ -41,12 +41,14 @@ public class UserServiceImpl implements UserService {
         //Метод для проверки пароля пользователя
         User byUsername = userRepository.findByUsername(username);
         if (byUsername != null ) {
-            return true;
+            return encoder.matches(currentPassword, byUsername.getPassword());
         } else {
             logger.info("Юзер отсутствует");
             throw new UserNotFoundException("User not found with id: " + username);
         }
     }
+
+
 
     @Override// Метод для обновления пароля пользователя
     public void updatePassword(String username, NewPassword newPassword) throws NewPasswordException {
@@ -73,18 +75,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UpdateUser updateUser(String username, UpdateUser updateUser) {
+    public UpdateUser updateUser(String username, UpdateUser update) {
         User userOptional = userRepository.findByUsername(username);
         if (userOptional != null) {
-
-            // Преобразуем DTO в сущность с помощью маппера
-
             // Обновляем только измененные поля
-            userOptional.setFirstName(updateUser.getFirstName());
-            userOptional.setLastName(updateUser.getLastName());
-            userOptional.setPhone(updateUser.getPhone());
-
-            return userMapper.mapToUpdateUser(userRepository.save(userOptional));
+            userOptional.setFirstName(update.getFirstName());
+            userOptional.setLastName(update.getLastName());
+            userOptional.setPhone(update.getPhone());
+            userRepository.save(userOptional);
+            return update;
         } else {
             throw new UserNotFoundException("User not found with email: " + username);
         }
