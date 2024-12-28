@@ -84,7 +84,8 @@ public class AdsController {
 
     //Получение информации об объявлении
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAd(@PathVariable Integer id, Authentication authentication) {
+    public ResponseEntity<ExtendedAd> getAd(@PathVariable("id") Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getName() == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else if (adsService.existId(id)) {
@@ -114,7 +115,7 @@ public class AdsController {
     public ResponseEntity<?> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                       Authentication authentication) {
         // Получение объявления, которое необходимо обновить
-        ResponseEntity<ExtendedAd> oldAdResponse = getAd(id, authentication);
+        ResponseEntity<ExtendedAd> oldAdResponse = getAd(id);
 
         // Проверка, существует ли объявление
         if (oldAdResponse.getStatusCode() != HttpStatus.OK) {
@@ -127,10 +128,12 @@ public class AdsController {
 
     // Получение объявлений авторизованного пользователя
     @GetMapping("/me")
-    public ResponseEntity<Object> getUserAds(@AuthenticationPrincipal User user) {
-        if (user == null) {
+    public ResponseEntity<Object> getUserAds() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } else {
+            User user = userRepository.findByUsername(authentication.getName());
             return ResponseEntity.ok(adsService.getMyAds(user.getId()));
         }
     }

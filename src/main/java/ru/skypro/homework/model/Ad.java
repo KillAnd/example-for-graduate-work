@@ -72,6 +72,7 @@ public class Ad {
      * Связь с сущностью Image.
      */
     @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "ad_image_id", referencedColumnName = "id")
     private Image imageAd;
 }

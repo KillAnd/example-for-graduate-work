@@ -67,6 +67,7 @@ public class User {
      * Список объявлений, созданных пользователем.
      * Связь с сущностью Ad.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "userAd", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ad> adsListForUsers;
 

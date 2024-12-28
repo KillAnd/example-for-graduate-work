@@ -100,6 +100,7 @@ public class CommentMapperImpl {
         Comments dto = new Comments();
         dto.setCount(comments.size());
         dto.setResults(comments);
+
         return dto;
     }
 
