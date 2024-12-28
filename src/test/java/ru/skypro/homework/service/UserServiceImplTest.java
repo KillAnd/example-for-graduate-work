@@ -48,7 +48,7 @@ public class UserServiceImplTest {
         user.setPassword(password);
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
 
         // Выполнение теста
         boolean result = userService.checkCurrentPassword(email, password);
@@ -64,7 +64,7 @@ public class UserServiceImplTest {
         String password = "hashedPassword";
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(email)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(UserNotFoundException.class, () -> {
@@ -83,7 +83,7 @@ public class UserServiceImplTest {
         user.setPassword(correctPassword);
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
 
         // Выполнение теста
         boolean result = userService.checkCurrentPassword(email, incorrectPassword);
@@ -105,7 +105,7 @@ public class UserServiceImplTest {
         user.setPassword("hashedPassword");
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
 
         // Выполнение теста
         userService.updatePassword(email, newPassword);
@@ -124,7 +124,7 @@ public class UserServiceImplTest {
         newPassword.setNewPassword("newHashedPassword");
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(email)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(UserNotFoundException.class, () -> {
@@ -144,7 +144,7 @@ public class UserServiceImplTest {
         user.setPassword("hashedPassword");
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
 
         // Выполнение теста и проверка исключения
         assertThrows(NewPasswordException.class, () -> {
@@ -161,7 +161,7 @@ public class UserServiceImplTest {
         user.setEmail(email);
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
 
         // Выполнение теста
         Optional<User> result = userService.findUserByEmail(email);
@@ -177,7 +177,7 @@ public class UserServiceImplTest {
         String email = "test@example.com";
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(email)).thenReturn(Optional.empty());
 
         // Выполнение теста
         Optional<User> result = userService.findUserByEmail(email);
@@ -209,7 +209,7 @@ public class UserServiceImplTest {
         updatedUser.setPhone("1234567890");
 
         // Мокирование репозитория и маппера
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(existingUser));
         when(userMapper.mapFromUpdateUser(updateUser)).thenReturn(updatedUser);
         when(userRepository.save(existingUser)).thenReturn(updatedUser);
 
@@ -229,7 +229,7 @@ public class UserServiceImplTest {
         UpdateUser updateUser = new UpdateUser();
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(email)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(UserNotFoundException.class, () -> {
@@ -247,7 +247,7 @@ public class UserServiceImplTest {
         user.setEmail(email);
 
         // Мокирование репозитория и ImageService
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
         doNothing().when(imageService).uploadUserImage(email, image);
 
         // Выполнение теста
@@ -264,7 +264,7 @@ public class UserServiceImplTest {
         MultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image".getBytes());
 
         // Мокирование репозитория
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(email)).thenReturn(Optional.empty());
 
         // Выполнение теста и проверка исключения
         assertThrows(UserNotFoundException.class, () -> {
@@ -281,7 +281,7 @@ public class UserServiceImplTest {
         user.setEmail(email);
 
         // Мокирование репозитория и ImageService
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(email)).thenReturn(Optional.of(user));
         doThrow(IOException.class).when(imageService).uploadUserImage(email, image);
 
         // Выполнение теста и проверка исключения

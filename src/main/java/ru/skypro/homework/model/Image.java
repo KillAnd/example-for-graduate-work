@@ -15,8 +15,8 @@ public class Image {
     private long fileSize; //размер файла в байтах
     private String mediaType; //тип медиа
 
-    @Lob
     @Column(name = "data")
+    @Basic(fetch = FetchType.LAZY)
     private byte[] data;
 
 }

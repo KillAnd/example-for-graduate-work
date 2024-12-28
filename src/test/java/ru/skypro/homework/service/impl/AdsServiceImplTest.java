@@ -95,7 +95,7 @@ class AdsServiceImplTest {
         when(adRepository.findById(id)).thenReturn(Optional.of(ad));
 
         ExtendedAd extendedAd = new ExtendedAd();
-        extendedAd.setAdId(id);
+        extendedAd.setPk(id);
         when(adMapper.mapToExtendedAd(user, ad)).thenReturn(extendedAd);
 
         //when

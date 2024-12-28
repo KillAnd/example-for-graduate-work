@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findById(int id);
-    @Query("SELECT c FROM Comment c WHERE c.adCom.id = :adId AND c.id = :commentId")
+    @Query("SELECT c FROM Comment c WHERE c.ad.id = :adId AND c.id = :commentId")
     Comment findByAdIdAndId(@Param("adId") Integer adId, @Param("commentId") Integer commentId);
 
 }

@@ -14,7 +14,7 @@ public interface AdsService {
     Ads getAllAds();
     Ad createAd(CreateOrUpdateAd adProperties,
                 MultipartFile image,
-                String username) throws IOException;
+                User user) throws IOException;
     Ads getAd(Authentication authentication);
     void deleteAd(int id);
     Ads getMyAds(int currentUserId);
