@@ -45,13 +45,13 @@ public class AuthServiceImpl implements AuthService {
         if (manager.userExists(register.getUsername())) {
             return false;
         }
-        manager.createUser(
-                User.builder()
-                        .passwordEncoder(this.encoder::encode)
-                        .password(register.getPassword())
-                        .username(register.getUsername())
-                        .roles(register.getRole().name())
-                        .build());
+//        manager.createUser(
+//                User.builder()
+//                        .passwordEncoder(this.encoder::encode)
+//                        .password(register.getPassword())
+//                        .username(register.getUsername())
+//                        .roles(register.getRole().name())
+//                        .build());
         register.setPassword(encoder.encode(register.getPassword()));
         userRepository.save(userMapper.toUserEntity(register));
         return true;

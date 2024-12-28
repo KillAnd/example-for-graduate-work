@@ -73,19 +73,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String username, UpdateUser updateUser) {
+    public UpdateUser updateUser(String username, UpdateUser updateUser) {
         User userOptional = userRepository.findByUsername(username);
         if (userOptional != null) {
 
             // Преобразуем DTO в сущность с помощью маппера
-            User updatedUser = userMapper.mapFromUpdateUser(updateUser);
 
             // Обновляем только измененные поля
-            updateUser.setFirstName(updatedUser.getFirstName());
-            updatedUser.setLastName(updatedUser.getLastName());
-            updatedUser.setPhone(updatedUser.getPhone());
+            userOptional.setFirstName(updateUser.getFirstName());
+            userOptional.setLastName(updateUser.getLastName());
+            userOptional.setPhone(updateUser.getPhone());
 
-            return userRepository.save(updatedUser);
+            return userMapper.mapToUpdateUser(userRepository.save(userOptional));
         } else {
             throw new UserNotFoundException("User not found with email: " + username);
         }

@@ -214,7 +214,7 @@ public class UserServiceImplTest {
         when(userRepository.save(existingUser)).thenReturn(updatedUser);
 
         // Выполнение теста
-        User result = userService.updateUser(email, updateUser);
+        UpdateUser result = userService.updateUser(email, updateUser);
 
         // Проверка результата
         assertEquals("Updated", result.getFirstName());

@@ -17,7 +17,7 @@ public interface UserService {
     Optional<User> findUserById(Integer id);
     User findUserByUsername(String username);
 
-    User updateUser(String username, UpdateUser updateUser);
+    UpdateUser updateUser(String username, UpdateUser updateUser);
     void updateUserImage(String username, MultipartFile image);
 
 

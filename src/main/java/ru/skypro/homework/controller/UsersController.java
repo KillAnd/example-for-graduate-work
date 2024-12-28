@@ -60,15 +60,15 @@ public class UsersController {
 
     // Метод для обновления информации об авторизованном пользователе
     @PatchMapping("/me")
-    public ResponseEntity<User> updateUser(@RequestBody UpdateUser updateUser) {
+    public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
         // Получение текущего пользователя из контекста безопасности
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName(); // Используем email как идентификатор пользователя
 
         // Вызов сервиса для обновления данных пользователя
-        User updatedUser = userService.updateUser(currentUsername, updateUser);
+        UpdateUser user = userService.updateUser(currentUsername, updateUser);
 
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PatchMapping("/me/image")
