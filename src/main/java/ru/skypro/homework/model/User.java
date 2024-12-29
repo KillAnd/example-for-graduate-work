@@ -76,6 +76,7 @@ public class User {
      * Связь с сущностью Comment.
      */
     @OneToMany(mappedBy = "userCom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Comment> commentsListForUsers;
 
     /**
