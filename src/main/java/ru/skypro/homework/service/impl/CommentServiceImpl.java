@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.mapper.CommentMapperImpl;
@@ -8,9 +10,13 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 import java.io.FileNotFoundException;
+import java.util.List;
+
 
 @Service
 public class CommentServiceImpl implements CommentService {
+
+    Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
 
     private final CommentMapperImpl commentMapper;
 
@@ -23,7 +29,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comments getCommentsById(int id) {
-        return commentMapper.mapToDto(commentRepository.findById(id));
+        List<Comment> comments = commentRepository.findByAdPk(id);
+        logger.info("Получена сущность комментария {}", comments);
+        return commentMapper.mapToDto(comments);
     }
 
     @Override

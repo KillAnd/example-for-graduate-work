@@ -54,10 +54,8 @@ public class AdsServiceImpl implements AdsService {
         Ad adEntity = adMapper.toAdEntity(adProperties, uploadImage.getFilePath(), user);
         adEntity.setImageAd(uploadImage);
         logger.info("Получена сущность: {}", adEntity);
-        adRepository.save(adEntity);
+        Ad adEntityBD = adRepository.save(adEntity);
         logger.info("Сущность сохранена в БД");
-
-        Ad adEntityBD = adRepository.findAdEntityByImage(uploadImage.getFilePath());
 
         return adMapper.toAdDto(adEntityBD);
     }
