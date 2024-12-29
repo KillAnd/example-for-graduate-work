@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.mapper.UserMapperImpl;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
@@ -90,8 +91,13 @@ public class UserServiceImpl implements UserService {
      * @return Optional, содержащий пользователя, если он найден, иначе пустой Optional
      */
     @Override
-    public Optional<User> findUserById(Integer id) {
-        return userRepository.findById(id);
+    public UserDTO findUserById(Integer id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            return userMapper.toUserDto(optionalUser.get());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -100,8 +106,8 @@ public class UserServiceImpl implements UserService {
      * @param username имя пользователя
      * @return найденный пользователь
      */
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public UserDTO findUserByUsername(String username) {
+        return userMapper.toUserDto(userRepository.findByUsername(username));
     }
 
     /**

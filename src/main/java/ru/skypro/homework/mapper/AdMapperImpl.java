@@ -1,5 +1,6 @@
 package ru.skypro.homework.mapper;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.exception.AdNotFoundException;
@@ -19,6 +20,9 @@ import java.util.List;
  */
 @Component
 public class AdMapperImpl {
+
+    @Value("${base.url.for.images}")
+    private String baseURL;
 
     private final UserRepository userRepository;
     private final AdRepository adRepository;
@@ -74,7 +78,7 @@ public class AdMapperImpl {
         adEntity.setPrice(ad.getPrice());
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
-        adEntity.setImage(filePath);
+        adEntity.setImage(baseURL + filePath);
         adEntity.setUserAd(userRepository.findByUsername(username));
         return adEntity;
     }
@@ -116,7 +120,7 @@ public class AdMapperImpl {
         extendedAd.setAuthorLastName(adEntity.getUserAd().getLastName());
         extendedAd.setDescription(adEntity.getDescription());
         extendedAd.setEmail(adEntity.getUserAd().getUsername());
-        extendedAd.setImage(adEntity.getImage());
+        extendedAd.setImage(baseURL + adEntity.getImage());
         extendedAd.setPhone(adEntity.getUserAd().getPhone());
         extendedAd.setPrice(adEntity.getPrice());
         extendedAd.setTitle(adEntity.getTitle());

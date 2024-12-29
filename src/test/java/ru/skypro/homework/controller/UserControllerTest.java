@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.exception.NewPasswordException;
 import ru.skypro.homework.exception.UnauthorizedException;
 import ru.skypro.homework.model.User;
@@ -70,11 +71,11 @@ class UsersControllerTest {
 
     @Test
     void getUser_Success() {
-        User user = new User();
+        UserDTO user = new UserDTO();
         when(authentication.getName()).thenReturn("user@example.com");
         when(userService.findUserByUsername("user@example.com")).thenReturn(user);
 
-        ResponseEntity<User> response = usersController.getUser();
+        ResponseEntity<UserDTO> response = usersController.getUser();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(user, response.getBody());
