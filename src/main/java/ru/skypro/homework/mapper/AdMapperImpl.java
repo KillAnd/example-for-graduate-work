@@ -51,7 +51,7 @@ public class AdMapperImpl {
         adEntity.setPrice(ad.getPrice());
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
-        adEntity.setImage(filePath);
+        adEntity.setImage("http://localhost:8080/" + filePath);
         adEntity.setAuthor(user.getId());
         adEntity.setUserAd(user);
         return adEntity;

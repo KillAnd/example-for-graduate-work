@@ -1,5 +1,7 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,7 @@ public class AdsController {
     }
 
     //Добавление объявления
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Ad> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
                                     @RequestPart("image") MultipartFile image) {
         logger.info("Зашли в метод по добавлению объявления");
@@ -95,23 +97,25 @@ public class AdsController {
     }
 
     //Удаление объявления
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")})
+    @PreAuthorize("@checkAccessService.isAdminOrOwnerAd(#id, authentication)")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteAd(@PathVariable int id, Authentication authentication) {
-        if (authentication.getName() == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } else if (adsService.existId(id)) {
+    public ResponseEntity<Object> deleteAd(@PathVariable int id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (adsService.existId(id)) {
             adsService.deleteAd(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return ResponseEntity.ok().build();
     }
 
     //Обновление информации об объявлении
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("@checkAccessService.isAdminOrOwnerAd(#id, authentication)")
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
+    public ResponseEntity<Ad> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                       Authentication authentication) {
         // Получение объявления, которое необходимо обновить
         ResponseEntity<ExtendedAd> oldAdResponse = getAd(id, authentication);
