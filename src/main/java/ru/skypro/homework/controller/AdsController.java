@@ -53,8 +53,8 @@ public class AdsController {
     //Добавление объявления
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Ad> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
-                                    @RequestPart("image") MultipartFile image,
-                                    Authentication authentication) {
+                                    @RequestPart("image") MultipartFile image) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Зашли в метод по добавлению объявления");
         User user = userRepository.findByUsername(authentication.getName());
         // Проверка аутентификации пользователя
