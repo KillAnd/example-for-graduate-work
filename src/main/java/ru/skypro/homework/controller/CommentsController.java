@@ -1,8 +1,11 @@
 package ru.skypro.homework.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.service.CommentService;
@@ -15,6 +18,8 @@ import java.util.List;
 
 public class CommentsController {
 
+    private final Logger logger = LoggerFactory.getLogger(CommentsController.class);
+
     private final CommentService commentService;
 
     public CommentsController(CommentService commentService) {
@@ -22,8 +27,10 @@ public class CommentsController {
     }
 
     @GetMapping("/{id}/comments")  // получение комментариев объявления
-    public ResponseEntity <List<Comment>> getComments(@PathVariable("adId") Integer adId) {
-        List<Comment> comments = commentService.getCommentsById(adId).getResults();
+    public ResponseEntity <Comments> getComments(@PathVariable("id") Integer adId) {
+        logger.info("полученный ID объявления{}", adId);
+        Comments comments = commentService.getCommentsById(adId);
+        logger.info("возвращаемый комментарий{}", comments);
         return ResponseEntity.ok(comments);
     }
 

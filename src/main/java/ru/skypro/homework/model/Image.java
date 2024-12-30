@@ -42,4 +42,5 @@ public class Image {
     @Type(type="org.hibernate.type.BinaryType")
     @Basic(fetch = FetchType.LAZY)
     private byte[] data;
+
 }

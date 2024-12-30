@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.exception.NewPasswordException;
@@ -62,11 +63,11 @@ public class UsersController {
      *         или UNAUTHORIZED, если пользователь не найден
      */
     @GetMapping("/me")
-    public ResponseEntity<User> getUser() {
+    public ResponseEntity<UserDTO> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
-        User user = userService.findUserByUsername(currentUsername);
+        UserDTO user = userService.findUserByUsername(currentUsername);
 
         if (user == null) {
             throw new UnauthorizedException("User not found");

@@ -67,6 +67,7 @@ public class User {
      * Список объявлений, созданных пользователем.
      * Связь с сущностью Ad.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "userAd", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ad> adsListForUsers;
 
@@ -74,6 +75,7 @@ public class User {
      * Список комментариев, оставленных пользователем.
      * Связь с сущностью Comment.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "userCom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentsListForUsers;
 

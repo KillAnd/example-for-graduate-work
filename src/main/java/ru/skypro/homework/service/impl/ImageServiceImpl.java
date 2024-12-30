@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.ImageNotFoundException;
@@ -39,6 +40,9 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Value("${path.to.images.folder}")
+    private String imagesDir;
+
     /**
      * Загружает изображение на сервер и сохраняет его в базе данных.
      *
@@ -55,7 +59,7 @@ public class ImageServiceImpl implements ImageService {
         imageAdded.setFileSize(imageFile.getSize());
         imageAdded.setMediaType(imageFile.getContentType());
         logger.info("параметры фото изменены");
-        Path filePath = Path.of("/image", uuid + "." + getExtension(imageFile));
+        Path filePath = Path.of(imagesDir, uuid + "." + getExtension(imageFile));
         logger.info("Путь изменен");
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
