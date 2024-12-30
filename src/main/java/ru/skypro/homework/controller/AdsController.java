@@ -1,5 +1,8 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
@@ -47,6 +50,10 @@ public class AdsController {
     }
 
     //Получение всех объявлений
+    @Operation(summary = "Получение всех объявлений", tags = {"Объявления"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content =
+            @Content(mediaType = "application/json", schema = @Schema(implementation = Ads.class)))})
     @GetMapping()
     public ResponseEntity<Ads> getAllAds() {
         return ResponseEntity.ok(adsService.getAllAds());
@@ -130,13 +137,16 @@ public class AdsController {
 
 
     // Получение объявлений авторизованного пользователя
+    @Operation(summary = "Получение объявлений авторизованного пользователя", tags = {"Объявления"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Ads.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content())
+    })
     @GetMapping("/me")
-    public ResponseEntity<Object> getUserAds(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else {
-            return ResponseEntity.ok(adsService.getMyAds(user.getId()));
-        }
+    public ResponseEntity<Ads> getUserAds() {
+            return ResponseEntity.ok().body(adsService.getMyAds());
     }
 
     // Обновление картинки объявления

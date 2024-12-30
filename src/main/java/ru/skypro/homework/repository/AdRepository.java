@@ -11,7 +11,6 @@ public interface AdRepository extends JpaRepository<Ad, Integer> {
 
     @Query(value = "UPDATE ad SET description=:description, price=:price, title=:title WHERE pk=:id", nativeQuery = true)
     int updateInfoAboutAdByPk(int id, String description, Integer price, String title);
-    List<Ad> findAdsByAuthor(int currentUserId);
 
     Ad findAdByPk(int id);
 

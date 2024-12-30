@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
@@ -80,8 +81,13 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Ads getMyAds(int currentUserId) {
-        return adMapper.mapToAds(adRepository.findAdsByAuthor(currentUserId));
+    public Ads getMyAds() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Ad> myAdsList = adRepository.findAll().stream()
+                .filter(ad -> ad.getUserAd().getUsername().equals(auth.getName()))
+                .map(adMapper::toAdDto)
+                .collect(Collectors.toList());
+        return new Ads(myAdsList.size(), List.of(myAdsList.toArray(Ad[]::new)));
     }
 
 
