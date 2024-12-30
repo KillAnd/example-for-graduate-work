@@ -92,7 +92,16 @@ public class AdsController {
     }
 
     //Получение информации об объявлении
-    @GetMapping("/{id}")
+    @Operation(summary = "Получение информации об объявлении", tags = {"Объявления"})
+    @GetMapping(path = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExtendedAd.class)),
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = "")),
+    })
     public ResponseEntity<ExtendedAd> getAd(@PathVariable Integer id, Authentication authentication) {
         if (authentication.getName() == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

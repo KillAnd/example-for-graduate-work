@@ -61,8 +61,8 @@ public class AdsServiceImpl implements AdsService {
         return adMapper.toAdDto(adEntityBD);
     }
 
-    public ExtendedAd getAdById(Integer id) {
-        Ad adEntity = adRepository.findAdByPk(id);
+    public ExtendedAd getAdById(Integer pk) {
+        Ad adEntity = adRepository.findAdByPk(pk);
         return adMapper.toExtendedAd(adEntity);
     }
 
