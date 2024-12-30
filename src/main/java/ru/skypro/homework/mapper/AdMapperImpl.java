@@ -1,5 +1,7 @@
 package ru.skypro.homework.mapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
@@ -20,6 +22,8 @@ import java.util.List;
  */
 @Component
 public class AdMapperImpl {
+
+    Logger logger = LoggerFactory.getLogger(AdMapperImpl.class);
 
     @Value("${base.url.for.images}")
     private String baseURL;
@@ -55,7 +59,7 @@ public class AdMapperImpl {
         adEntity.setPrice(ad.getPrice());
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
-        adEntity.setImage("http://localhost:8080/" + filePath);
+        adEntity.setImage(filePath);
         adEntity.setAuthor(user.getId());
         adEntity.setUserAd(user);
         return adEntity;
@@ -78,7 +82,7 @@ public class AdMapperImpl {
         adEntity.setPrice(ad.getPrice());
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
-        adEntity.setImage(baseURL + filePath);
+        adEntity.setImage(filePath.replace('\\', '/'));
         adEntity.setUserAd(userRepository.findByUsername(username));
         return adEntity;
     }
@@ -120,7 +124,7 @@ public class AdMapperImpl {
         extendedAd.setAuthorLastName(adEntity.getUserAd().getLastName());
         extendedAd.setDescription(adEntity.getDescription());
         extendedAd.setEmail(adEntity.getUserAd().getUsername());
-        extendedAd.setImage(baseURL + adEntity.getImage());
+        extendedAd.setImage(adEntity.getImage().replace('\\', '/'));
         extendedAd.setPhone(adEntity.getUserAd().getPhone());
         extendedAd.setPrice(adEntity.getPrice());
         extendedAd.setTitle(adEntity.getTitle());

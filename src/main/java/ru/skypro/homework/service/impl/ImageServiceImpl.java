@@ -4,10 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.exception.ImageNotFoundException;
-import ru.skypro.homework.model.Ad;
+import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
@@ -20,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static java.nio.file.Paths.get;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
@@ -39,6 +43,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private ImageRepository imageRepository;
+    private Path path;
 
     @Value("${path.to.images.folder}")
     private String imagesDir;
@@ -76,9 +81,11 @@ public class ImageServiceImpl implements ImageService {
         }
         logger.info("Файл успешно сохранён на диск. Полное имя файла: {}", filePath);
 
-        imageAdded.setFilePath(filePath.toString());
+        String newFilePath = filePath.toString().replace('\\', '/');
+        imageAdded.setFilePath(newFilePath);
+
         Image savedImage = imageRepository.save(imageAdded);
-        logger.info("Изображение загрузилось в базу данных");
+        logger.info("Изображение загрузилось в базу данных. Полное имя файла: {}", newFilePath);
 
         return savedImage;
     }

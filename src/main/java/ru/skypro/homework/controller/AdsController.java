@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,7 +61,15 @@ public class AdsController {
     }
 
     //Добавление объявления
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "Добавление объявления", tags = {"Объявления"})
+    @PostMapping(consumes = "multipart/form-data")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content = {
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Ad.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+    })
     public ResponseEntity<Ad> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
                                     @RequestPart("image") MultipartFile image) {
         logger.info("Зашли в метод по добавлению объявления");
@@ -113,12 +122,13 @@ public class AdsController {
     }
 
     //Удаление объявления
+    @Operation(summary = "Удаление объявления", tags = {"Объявления"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")})
-    @PreAuthorize("@checkAccessService.isAdminOrOwnerAd(#id, authentication)")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAd(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -129,8 +139,18 @@ public class AdsController {
     }
 
     //Обновление информации об объявлении
-    @PreAuthorize("@checkAccessService.isAdminOrOwnerAd(#id, authentication)")
-    @PatchMapping("/{id}")
+    @Operation(summary = "Обновление информации в объявлении", tags = {"Объявления"})
+    @PatchMapping(path = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Ad.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "")),
+    })
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Ad> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                       Authentication authentication) {
         // Получение объявления, которое необходимо обновить
@@ -159,18 +179,28 @@ public class AdsController {
     }
 
     // Обновление картинки объявления
+    @Operation(summary = "Обновление картинки объявления", tags = {"Объявления"})
+    @PatchMapping(path = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/octet-stream",
+                            array = @ArraySchema(schema = @Schema(type = "string", format = "byte")))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "")),
+    })
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    @PatchMapping("/{id}/image")
-    public ResponseEntity<byte[]> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image,
-                                              Authentication authentication) throws IOException {
+    public ResponseEntity<?> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image) throws IOException {
         logger.info("Метод addAds, класса AdController. Приняты: (int) id {}. Изображение объявления{}",
                 id, image.getOriginalFilename());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getName() == null) {
+            logger.info("юзер аутентификацию не прошел");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else if (adsService.existId(id)) {
-            byte[] imageArrayBytes = adsService.updateAdImage(id, image);
-            logger.info("Получен массив байт в контроллер: {}", imageArrayBytes[0]);
-            return new ResponseEntity<>(imageArrayBytes, HttpStatus.OK);
+            adsService.updateAdImage(id, image);
+            logger.info("Получена картинка. {}", image.getName());
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

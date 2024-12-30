@@ -20,6 +20,7 @@ import ru.skypro.homework.exception.UnauthorizedException;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -35,6 +36,8 @@ public class UsersController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ImageService imageService;
 
     /**
      * Обновляет пароль текущего пользователя.

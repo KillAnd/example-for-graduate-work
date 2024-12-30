@@ -19,7 +19,7 @@ public interface AdsService {
     void deleteAd(int id);
     Ads getMyAds();
     Ad updateAd(int id, CreateOrUpdateAd newAd);
-    byte[] updateAdImage(Integer id, MultipartFile image) throws IOException;
+    void updateAdImage(Integer id, MultipartFile image) throws IOException;
     boolean existId(Integer id);
     ExtendedAd getAdById(Integer id);
 }

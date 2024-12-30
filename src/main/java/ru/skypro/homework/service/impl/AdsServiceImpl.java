@@ -19,6 +19,8 @@ import ru.skypro.homework.service.ImageService;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -104,7 +106,7 @@ public class AdsServiceImpl implements AdsService {
 
 
     @Override
-    public byte[] updateAdImage(Integer id, MultipartFile image) throws IOException {
+    public void updateAdImage(Integer id, MultipartFile image) throws IOException {
 
         // Найти объявление по id
         Optional<Ad> adOptional = adRepository.findById(id);
@@ -116,17 +118,17 @@ public class AdsServiceImpl implements AdsService {
 
         // Сохранить новое изображение
         Image imagePath = imageService.uploadImage(image);
-
+        logger.info("Переходим из сервиса объявлений в сервис картинки");
         // Обновить ссылку на изображение в объявлении
         ad.setImage(imagePath.getFilePath());
-
+        logger.info("Путь картинки объявления изменен");
         // Сохранить обновленное объявление в базе данных
         adRepository.save(ad);
-        return ad.getImageAd().getData();
+        logger.info("Картинка объявления сохранена");
     }
 
     public boolean existId(Integer id) {
-        logger.info("Вошли в метод existId сервиса AdServiceImpl. Получен id (int): {}", id);
+        logger.info("Вошли в метод existId сервиса AdsServiceImpl. Получен id (int): {}", id);
         return adRepository.existsAdByPk(id);
     }
 

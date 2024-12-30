@@ -58,7 +58,7 @@ public class UserMapperImpl {
         userDto.setLastName(userEntity.getLastName());
         userDto.setPhone(userEntity.getPhone());
         userDto.setRole(userEntity.getRole());
-        userDto.setImage(baseURL + userEntity.getImage());
+        userDto.setImage(userEntity.getImage().replace('\\', '/'));
 
         return userDto;
     }

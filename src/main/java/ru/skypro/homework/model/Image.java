@@ -1,5 +1,6 @@
 package ru.skypro.homework.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
@@ -38,9 +39,7 @@ public class Image {
     /**
      * Данные изображения в виде массива байтов.
      */
-    @Column(name = "data")
-    @Type(type="org.hibernate.type.BinaryType")
-    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
     private byte[] data;
 
 }
