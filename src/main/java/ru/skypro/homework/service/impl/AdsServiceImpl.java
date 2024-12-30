@@ -9,8 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.mapper.AdMapperImpl;
 import ru.skypro.homework.model.Ad;
+import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
@@ -83,11 +86,8 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public Ads getMyAds() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<Ad> myAdsList = adRepository.findAll().stream()
-                .filter(ad -> ad.getUserAd().getUsername().equals(auth.getName()))
-                .map(adMapper::toAdDto)
-                .collect(Collectors.toList());
-        return new Ads(myAdsList.size(), List.of(myAdsList.toArray(Ad[]::new)));
+        List<Ad> myAdsList = adRepository.findByUserAdUsername(auth.getName());
+        return adMapper.mapToAds(myAdsList);
     }
 
 
@@ -128,6 +128,12 @@ public class AdsServiceImpl implements AdsService {
     public boolean existId(Integer id) {
         logger.info("Вошли в метод existId сервиса AdServiceImpl. Получен id (int): {}", id);
         return adRepository.existsAdByPk(id);
+    }
+
+    public boolean isAdAuthor(Integer adId, Integer userId) {
+        Ad ad = adRepository.findById(adId)
+                .orElseThrow(() -> new AdNotFoundException("Объявление не найдено"));
+        return ad.getUserAd().getId().equals(userId);
     }
 
 }

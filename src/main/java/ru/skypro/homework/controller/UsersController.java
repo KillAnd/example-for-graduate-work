@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,7 @@ public class UsersController {
      * @return ResponseEntity с HTTP-статусом OK, если пароль успешно обновлен,
      *         или BAD_REQUEST, если текущий пароль неверен
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPassword newPassword) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -62,6 +64,8 @@ public class UsersController {
      * @return ResponseEntity с данными пользователя и HTTP-статусом OK,
      *         или UNAUTHORIZED, если пользователь не найден
      */
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -82,6 +86,7 @@ public class UsersController {
      * @param updateUser объект, содержащий новые данные пользователя
      * @return ResponseEntity с обновленными данными пользователя и HTTP-статусом OK
      */
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -99,6 +104,7 @@ public class UsersController {
      * @return ResponseEntity с HTTP-статусом OK, если изображение успешно обновлено,
      *         или UNAUTHORIZED, если пользователь не авторизован
      */
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile image) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

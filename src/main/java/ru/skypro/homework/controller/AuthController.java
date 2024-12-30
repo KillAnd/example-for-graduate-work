@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class AuthController {
     Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
 
+    @PreAuthorize("permitAll()")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Login login) {
         logger.info("Вход в метод login, класса AuthController. Принят объект login: {}", login.toString());
@@ -39,6 +41,7 @@ public class AuthController {
         }
     }
 
+    @PreAuthorize("permitAll()")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register) {
         logger.info("Вход в метод register, класса AuthController. Принят объект register: {}", register.toString());

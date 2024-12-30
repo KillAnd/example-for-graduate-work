@@ -19,5 +19,7 @@ public interface AdRepository extends JpaRepository<Ad, Integer> {
     @Query(value = "SELECT EXISTS(SELECT 1 FROM ad WHERE pk = :id)", nativeQuery = true)
     boolean existsAdByPk(int id);
 
+    List<Ad> findByUserAdUsername(String username);
+
 
 }

@@ -26,6 +26,7 @@ public class CommentsController {
         this.commentService = commentService;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}/comments")  // получение комментариев объявления
     public ResponseEntity <Comments> getComments(@PathVariable("id") Integer adId) {
         logger.info("полученный ID объявления{}", adId);
@@ -34,6 +35,7 @@ public class CommentsController {
         return ResponseEntity.ok(comments);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("{id}/comments")  // добавление комментариев к объявлению
     public ResponseEntity<Comment> addComment(@PathVariable("id") Integer adId,
                                               @RequestBody CreateOrUpdateComment createComment) {
@@ -41,7 +43,7 @@ public class CommentsController {
         return ResponseEntity.ok(newComment);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') || @commentService.isCommentAuthor(#commentId, authentication.principal.id)")
     @DeleteMapping("{adId}/comments/{commentId}") // удаление комментария
     public ResponseEntity<Void> deleteComment(@PathVariable("adId") int adId, @PathVariable("commentId") Integer commentId) {
         commentService.deleteComment(adId, commentId);
@@ -49,7 +51,7 @@ public class CommentsController {
 
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') || @commentService.isCommentAuthor(#commentId, authentication.principal.id)")
     @PatchMapping("{adId}/comments/{commentId}") // обновление комментария
     public ResponseEntity<Comment> updateComment(@PathVariable("adId") int adId,
                                               @PathVariable("commentId") int commentId,

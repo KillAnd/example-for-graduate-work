@@ -30,8 +30,7 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/register",
             "/login",
-            "/images",
-            "/ad_images"
+            "/images"
     };
 
     /**
@@ -49,7 +48,7 @@ public class WebSecurityConfig {
                                 authorization
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
-                                        .mvcMatchers("/ads/**", "/users/**", "/images/**")
+                                        .mvcMatchers("/users/**")
                                         .authenticated())
                 .cors()
                 .and()

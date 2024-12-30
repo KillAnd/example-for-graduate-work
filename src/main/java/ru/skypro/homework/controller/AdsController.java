@@ -60,6 +60,7 @@ public class AdsController {
     }
 
     //Добавление объявления
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Ad> addAd(@RequestPart("properties") CreateOrUpdateAd ad,
                                     @RequestPart("image") MultipartFile image) {
@@ -118,7 +119,7 @@ public class AdsController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")})
-    @PreAuthorize("@checkAccessService.isAdminOrOwnerAd(#id, authentication)")
+    @PreAuthorize("hasRole('ADMIN') || @adService.isAdAuthor(#id, authentication.principal.id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAd(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -129,7 +130,7 @@ public class AdsController {
     }
 
     //Обновление информации об объявлении
-    @PreAuthorize("@checkAccessService.isAdminOrOwnerAd(#id, authentication)")
+    @PreAuthorize("hasRole('ADMIN') || @adService.isAdAuthor(#id, authentication.principal.id)")
     @PatchMapping("/{id}")
     public ResponseEntity<Ad> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
                                       Authentication authentication) {
@@ -153,13 +154,14 @@ public class AdsController {
                             schema = @Schema(implementation = Ads.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content())
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<Ads> getUserAds() {
             return ResponseEntity.ok().body(adsService.getMyAds());
     }
 
     // Обновление картинки объявления
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') || @adService.isAdAuthor(#id, authentication.principal.id)")
     @PatchMapping("/{id}/image")
     public ResponseEntity<byte[]> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image,
                                               Authentication authentication) throws IOException {
