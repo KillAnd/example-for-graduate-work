@@ -1,7 +1,10 @@
 package ru.skypro.homework.mapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.skypro.homework.controller.CommentsController;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.model.Ad;
@@ -26,7 +29,7 @@ public class AdMapperImpl {
 
     private final UserRepository userRepository;
     private final AdRepository adRepository;
-
+    private final Logger logger = LoggerFactory.getLogger(AdMapperImpl.class);
     /**
      * Конструктор для инициализации маппера.
      *
@@ -55,7 +58,8 @@ public class AdMapperImpl {
         adEntity.setPrice(ad.getPrice());
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
-        adEntity.setImage("http://localhost:8080/" + filePath);
+        //adEntity.setImage("http://localhost:8080/" + filePath);
+        adEntity.setImage(filePath);
         adEntity.setAuthor(user.getId());
         adEntity.setUserAd(user);
         return adEntity;
@@ -78,7 +82,8 @@ public class AdMapperImpl {
         adEntity.setPrice(ad.getPrice());
         adEntity.setTitle(ad.getTitle());
         adEntity.setDescription(ad.getDescription());
-        adEntity.setImage(baseURL + filePath);
+        //adEntity.setImage(baseURL + filePath);
+        adEntity.setImage(filePath);
         adEntity.setUserAd(userRepository.findByUsername(username));
         return adEntity;
     }
@@ -120,7 +125,11 @@ public class AdMapperImpl {
         extendedAd.setAuthorLastName(adEntity.getUserAd().getLastName());
         extendedAd.setDescription(adEntity.getDescription());
         extendedAd.setEmail(adEntity.getUserAd().getUsername());
-        extendedAd.setImage(baseURL + adEntity.getImage());
+        //extendedAd.setImage(baseURL + adEntity.getImage());
+        //extendedAd.setImage((baseURL + adEntity.getImage()).replace('\\', '/'));
+        extendedAd.setImage(adEntity.getImage().replace('\\', '/'));
+        logger.info("маппер выдает вот такое в адресе исходной картинки {}", adEntity.getImage());
+        logger.info("маппер выдает вот такое в адресе картинки {}", extendedAd.getImage());
         extendedAd.setPhone(adEntity.getUserAd().getPhone());
         extendedAd.setPrice(adEntity.getPrice());
         extendedAd.setTitle(adEntity.getTitle());

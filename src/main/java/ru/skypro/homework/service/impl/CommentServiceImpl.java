@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comments getCommentsById(int id) {
         List<Comment> comments = commentRepository.findByAdPk(id);
-        logger.info("Получена сущность комментария {}", comments);
+        //logger.info("Получена сущность комментария {}", comments);
         return commentMapper.mapToDto(comments);
     }
 

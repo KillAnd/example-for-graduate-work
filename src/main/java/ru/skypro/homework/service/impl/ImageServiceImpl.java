@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.model.Ad;
@@ -18,6 +19,7 @@ import ru.skypro.homework.service.ImageService;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -52,15 +54,20 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public Image uploadImage(MultipartFile imageFile) throws IOException {
-        UUID uuid = UUID.randomUUID();
 
         Image imageAdded = new Image();
         imageAdded.setData(imageFile.getBytes());
         imageAdded.setFileSize(imageFile.getSize());
         imageAdded.setMediaType(imageFile.getContentType());
         logger.info("параметры фото изменены");
-        Path filePath = Path.of(imagesDir, uuid + "." + getExtension(imageFile));
+
+        String extension = StringUtils.getFilenameExtension(imageFile.getOriginalFilename());
+        String filename = "/images/" + UUID.randomUUID() + "." + extension;
+        //Path filePath = Path.of(imagesDir, filename);
+        Path filePath = Path.of(filename);
         logger.info("Путь изменен");
+        logger.info("Новый путь {}", filePath);
+
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (

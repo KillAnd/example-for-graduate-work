@@ -28,9 +28,9 @@ public class CommentsController {
 
     @GetMapping("/{id}/comments")  // получение комментариев объявления
     public ResponseEntity <Comments> getComments(@PathVariable("id") Integer adId) {
-        logger.info("полученный ID объявления{}", adId);
+        //logger.info("полученный ID объявления{}", adId);
         Comments comments = commentService.getCommentsById(adId);
-        logger.info("возвращаемый комментарий{}", comments);
+        //logger.info("возвращаемый комментарий{}", comments);
         return ResponseEntity.ok(comments);
     }
 

@@ -62,6 +62,7 @@ public class AdsServiceImpl implements AdsService {
 
     public ExtendedAd getAdById(Integer id) {
         Ad adEntity = adRepository.findAdByPk(id);
+        logger.info("сервис объявления говорит, что картинка объявления лежит по адресу {}", adMapper.toExtendedAd(adEntity).getImage());
         return adMapper.toExtendedAd(adEntity);
     }
 
