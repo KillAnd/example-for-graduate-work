@@ -109,9 +109,9 @@ public class UsersController {
         if (authentication != null) {
             logger.info("Пользователь обнаружен");
             userService.updateUserImage(authentication.getName(), image);
-            return ResponseEntity.ok().build();
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

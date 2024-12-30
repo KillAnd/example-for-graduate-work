@@ -149,7 +149,6 @@ public class UserServiceImpl implements UserService {
                 logger.info("Отправка в image service прошла успешно");
                 userFind.setImage(imageAdded.getFilePath());
                 logger.info("Изображение сохранилось в базу данных");
-                userFind.setImageUsers(imageAdded);
                 userRepository.save(userFind);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to update user image", e);

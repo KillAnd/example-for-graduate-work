@@ -43,6 +43,7 @@ public class ImageController {
         this.userRepository = userRepository;
         this.adRepository = adRepository;
     }
+
     @PreAuthorize("permitAll()")
     @GetMapping(value = "/{name}",
             produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
@@ -50,11 +51,6 @@ public class ImageController {
         logger.info("попали в метод getImage в image controller");
         String fullPath = imagesDir + '/' + name;
         logger.info("выводим картинку по ссылке {}", fullPath);
-        File file = new File(fullPath);
-        if (file.exists()) {
-            logger.info("грузим файл по пути: {}", fullPath);
-            return Files.readAllBytes(Path.of(fullPath));
-        }
-        return null;
+        return Files.readAllBytes(Path.of(fullPath));
     }
 }
