@@ -83,7 +83,8 @@ public class ImageServiceImpl implements ImageService {
         }
         logger.info("Файл успешно сохранён на диск. Полное имя файла: {}", filePath);
 
-        imageAdded.setFilePath(filePath.toString());
+        String newFilePath = filePath.toString().replace('\\', '/');
+        imageAdded.setFilePath(newFilePath);
         Image savedImage = imageRepository.save(imageAdded);
         logger.info("Изображение загрузилось в базу данных");
 

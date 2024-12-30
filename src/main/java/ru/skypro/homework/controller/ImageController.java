@@ -44,7 +44,7 @@ public class ImageController {
         this.adRepository = adRepository;
     }
 
-    //@PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/{name}",
             produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
     public byte[] getImage(@PathVariable String name) throws IOException {
