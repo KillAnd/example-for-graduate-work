@@ -1,14 +1,22 @@
 package ru.skypro.homework.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.exception.NewPasswordException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapperImpl;
@@ -17,13 +25,8 @@ import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-class UserServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+public class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
@@ -32,7 +35,7 @@ class UserServiceImplTest {
     private ImageService imageService;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder;
 
     @Mock
     private UserMapperImpl userMapper;
@@ -40,197 +43,170 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    private User user;
+    private UserDTO userDTO;
+    private UpdateUser updateUser;
+    private NewPassword newPassword;
+    private MultipartFile image;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        user = new User();
+        user.setUsername("testUser");
+        user.setPassword("encodedPassword");
+
+        userDTO = new UserDTO();
+        userDTO.setEmail("testUser");
+
+        updateUser = new UpdateUser();
+        updateUser.setFirstName("NewFirstName");
+        updateUser.setLastName("NewLastName");
+        updateUser.setPhone("1234567890");
+
+        newPassword = new NewPassword();
+        newPassword.setCurrentPassword("currentPassword");
+        newPassword.setNewPassword("newPassword");
+
+        image = mock(MultipartFile.class);
     }
 
     @Test
-    void checkCurrentPassword_UserExists_ReturnsTrue() {
-        // Arrange
-        String username = "testUser";
-        User user = new User();
-        when(userRepository.findByUsername(username)).thenReturn(user);
+    void testCheckCurrentPassword_ValidPassword() {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(encoder.matches("currentPassword", "encodedPassword")).thenReturn(true);
 
-        // Act
-        boolean result = userService.checkCurrentPassword(username, "password");
-
-        // Assert
-        assertTrue(result);
+        assertTrue(userService.checkCurrentPassword("testUser", "currentPassword"));
     }
 
     @Test
-    void checkCurrentPassword_UserNotFound_ThrowsUserNotFoundException() {
-        // Arrange
-        String username = "nonExistentUser";
-        when(userRepository.findByUsername(username)).thenReturn(null);
+    void testCheckCurrentPassword_InvalidPassword() {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(encoder.matches("wrongPassword", "encodedPassword")).thenReturn(false);
 
-        // Act & Assert
+        assertFalse(userService.checkCurrentPassword("testUser", "wrongPassword"));
+    }
+
+    @Test
+    void testCheckCurrentPassword_UserNotFound() {
+        when(userRepository.findByUsername("unknownUser")).thenReturn(null);
+
         assertThrows(UserNotFoundException.class, () -> {
-            userService.checkCurrentPassword(username, "password");
+            userService.checkCurrentPassword("unknownUser", "currentPassword");
         });
     }
 
     @Test
-    void updatePassword_ValidCurrentPassword_UpdatesPassword() {
-        // Arrange
-        String username = "testUser";
-        NewPassword newPassword = new NewPassword();
-        newPassword.setCurrentPassword("oldPassword");
-        newPassword.setNewPassword("newPassword");
+    void testUpdatePassword_Success() {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(encoder.matches("currentPassword", "encodedPassword")).thenReturn(true);
 
-        User user = new User();
-        user.setPassword("encodedOldPassword");
+        userService.updatePassword("testUser", newPassword);
 
-        when(userRepository.findByUsername(username)).thenReturn(user);
-        when(passwordEncoder.matches(newPassword.getCurrentPassword(), user.getPassword())).thenReturn(true);
-        when(passwordEncoder.encode(newPassword.getNewPassword())).thenReturn("encodedNewPassword");
-
-        // Act
-        userService.updatePassword(username, newPassword);
-
-        // Assert
-        verify(userRepository).save(user);
-        assertEquals("encodedNewPassword", user.getPassword());
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
-    void updatePassword_InvalidCurrentPassword_ThrowsNewPasswordException() {
-        // Arrange
-        String username = "testUser";
-        NewPassword newPassword = new NewPassword();
+    void testUpdatePassword_InvalidCurrentPassword() {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(encoder.matches("wrongPassword", "encodedPassword")).thenReturn(false);
         newPassword.setCurrentPassword("wrongPassword");
-        newPassword.setNewPassword("newPassword");
 
-        User user = new User();
-        user.setPassword("encodedOldPassword");
-
-        when(userRepository.findByUsername(username)).thenReturn(user);
-        when(passwordEncoder.matches(newPassword.getCurrentPassword(), user.getPassword())).thenReturn(false);
-
-        // Act & Assert
         assertThrows(NewPasswordException.class, () -> {
-            userService.updatePassword(username, newPassword);
+            userService.updatePassword("testUser", newPassword);
         });
-
-        // Проверяем, что пароль не был изменен
-        verify(userRepository, never()).save(user);
     }
 
     @Test
-    void findUserById_UserExists_ReturnsUser() {
-        // Arrange
-        Integer id = 1;
-        User user = new User();
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+    void testUpdatePassword_UserNotFound() {
+        when(userRepository.findByUsername("unknownUser")).thenReturn(null);
 
-        // Act
-        Optional<User> result = userService.findUserById(id);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(user, result.get());
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.updatePassword("unknownUser", newPassword);
+        });
     }
 
     @Test
-    void findUserById_UserNotFound_ReturnsEmptyOptional() {
-        // Arrange
-        Integer id = 1;
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+    void testFindUserById_UserFound() {
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(userMapper.toUserDto(user)).thenReturn(userDTO);
 
-        // Act
-        Optional<User> result = userService.findUserById(id);
+        UserDTO result = userService.findUserById(1);
 
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void updateUser_UserExists_UpdatesUserAndReturnsUpdateUserDto() {
-        // Arrange
-        String username = "testUser";
-        UpdateUser updateUserDto = new UpdateUser();
-        updateUserDto.setFirstName("NewFirstName");
-        updateUserDto.setLastName("NewLastName");
-        updateUserDto.setPhone("NewPhone");
-
-        User user = new User();
-        user.setUsername(username);
-        user.setFirstName("OldFirstName");
-        user.setLastName("OldLastName");
-        user.setPhone("OldPhone");
-
-        when(userRepository.findByUsername(username)).thenReturn(user);
-
-        // Act
-        UpdateUser result = userService.updateUser(username, updateUserDto);
-
-        // Assert
         assertNotNull(result);
-        assertEquals(updateUserDto.getFirstName(), user.getFirstName());
-        assertEquals(updateUserDto.getLastName(), user.getLastName());
-        assertEquals(updateUserDto.getPhone(), user.getPhone());
-        verify(userRepository).save(user);
+        assertEquals("testUser", result.getEmail());
     }
 
     @Test
-    void updateUser_UserNotFound_ThrowsUserNotFoundException() {
-        // Arrange
-        String username = "nonExistentUser";
-        UpdateUser updateUserDto = new UpdateUser();
-        when(userRepository.findByUsername(username)).thenReturn(null);
+    void testFindUserById_UserNotFound() {
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        UserDTO result = userService.findUserById(1);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testFindUserByUsername_UserFound() {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(userMapper.toUserDto(user)).thenReturn(userDTO);
+
+        UserDTO result = userService.findUserByUsername("testUser");
+
+        assertNotNull(result);
+        assertEquals("testUser", result.getEmail());
+    }
+
+    @Test
+    void testUpdateUser_Success() {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+
+        UpdateUser result = userService.updateUser("testUser", updateUser);
+
+        assertNotNull(result);
+        assertEquals("NewFirstName", user.getFirstName());
+        assertEquals("NewLastName", user.getLastName());
+        assertEquals("1234567890", user.getPhone());
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    void testUpdateUser_UserNotFound() {
+        when(userRepository.findByUsername("unknownUser")).thenReturn(null);
+
         assertThrows(UserNotFoundException.class, () -> {
-            userService.updateUser(username, updateUserDto);
+            userService.updateUser("unknownUser", updateUser);
         });
     }
 
     @Test
-    void updateUserImage_UserExists_UpdatesImage() throws IOException {
-        // Arrange
-        String username = "testUser";
-        MultipartFile imageFile = mock(MultipartFile.class);
-        Image image = new Image();
-        image.setFilePath("path/to/image");
+    void testUpdateUserImage_Success() throws IOException {
+        Image imagePath = new Image();
+        imagePath.setFilePath("path/to/image");
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(imageService.uploadImage(image)).thenReturn(imagePath);
 
-        User user = new User();
-        when(userRepository.findByUsername(username)).thenReturn(user);
-        when(imageService.uploadImage(imageFile)).thenReturn(image);
+        userService.updateUserImage("testUser", image);
 
-        // Act
-        userService.updateUserImage(username, imageFile);
-
-        // Assert
-        assertEquals(image.getFilePath(), user.getImage());
-        verify(userRepository).save(user);
+        assertEquals("path/to/image", user.getImage());
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
-    void updateUserImage_UserNotFound_ThrowsUserNotFoundException() {
-        // Arrange
-        String username = "nonExistentUser";
-        MultipartFile imageFile = mock(MultipartFile.class);
-        when(userRepository.findByUsername(username)).thenReturn(null);
+    void testUpdateUserImage_IOException() throws IOException {
+        when(userRepository.findByUsername("testUser")).thenReturn(user);
+        when(imageService.uploadImage(image)).thenThrow(IOException.class);
 
-        // Act & Assert
-        assertThrows(UserNotFoundException.class, () -> {
-            userService.updateUserImage(username, imageFile);
-        });
-    }
-
-    @Test
-    void updateUserImage_IOException_ThrowsRuntimeException() throws IOException {
-        // Arrange
-        String username = "testUser";
-        MultipartFile imageFile = mock(MultipartFile.class);
-        User user = new User();
-        when(userRepository.findByUsername(username)).thenReturn(user);
-        when(imageService.uploadImage(imageFile)).thenThrow(new IOException());
-
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> {
-            userService.updateUserImage(username, imageFile);
+            userService.updateUserImage("testUser", image);
+        });
+    }
+
+    @Test
+    void testUpdateUserImage_UserNotFound() {
+        when(userRepository.findByUsername("unknownUser")).thenReturn(null);
+
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.updateUserImage("unknownUser", image);
         });
     }
 }

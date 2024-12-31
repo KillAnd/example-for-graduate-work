@@ -142,6 +142,8 @@ public class CommentMapperImpl {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User author = userRepository.findByUsername(authentication.getName());
             comment.setAuthor(author.getId());
+            comment.setAuthorImage(author.getImage().replace('\\', '/'));
+            comment.setAuthorFirstName(author.getFirstName());
             comment.setUserCom(author);
             comment.setText(createOrUpdateComment.getText());
             Ad ad = adRepository.findAdByPk(adId);
