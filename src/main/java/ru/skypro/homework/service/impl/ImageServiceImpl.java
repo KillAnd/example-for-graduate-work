@@ -39,7 +39,7 @@ public class ImageServiceImpl implements ImageService {
     private Path path;
 
     @Value("${path.to.images.folder}")
-    private String imagesDir;
+    String imagesDir;
 
     /**
      * Загружает изображение на сервер и сохраняет его в базе данных.

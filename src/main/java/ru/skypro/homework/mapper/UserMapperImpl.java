@@ -1,11 +1,9 @@
 package ru.skypro.homework.mapper;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.UserDTO;
-import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.User;
 
 /**
@@ -15,9 +13,6 @@ import ru.skypro.homework.model.User;
  */
 @Component
 public class UserMapperImpl {
-
-    @Value("${base.url.for.images}")
-    private String baseURL;
 
     /**
      * Преобразует объект Register в сущность User.
