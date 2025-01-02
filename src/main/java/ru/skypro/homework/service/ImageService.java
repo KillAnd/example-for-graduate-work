@@ -13,4 +13,6 @@ public interface ImageService {
     Image uploadImage(MultipartFile imageFile) throws IOException;
 
     String getExtension(MultipartFile file);
+
+    String getFullPath(String name);
 }

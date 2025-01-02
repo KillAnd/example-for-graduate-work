@@ -8,34 +8,29 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
-import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.Ad;
-import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
-import ru.skypro.homework.service.AuthService;
-import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.Predicate;
 
-import static ru.skypro.homework.dto.Role.ADMIN;
-
+/**
+ * Контроллер для управления объявлениями.
+ * Предоставляет REST API для выполнения операций с объявлениями, таких как получение, добавление, обновление и удаление.
+ * Все методы доступны по пути "/ads".
+ */
 @RestController
 @RequestMapping("/ads")
 public class AdsController {
@@ -44,13 +39,22 @@ public class AdsController {
     private final AdsService adsService;
     private final UserRepository userRepository;
 
-
+    /**
+     * Конструктор для инициализации контроллера.
+     *
+     * @param adsService Сервис для работы с объявлениями.
+     * @param userRepository Репозиторий для работы с пользователями.
+     */
     public AdsController(AdsService adsService, UserRepository userRepository) {
         this.adsService = adsService;
         this.userRepository = userRepository;
     }
 
-    //Получение всех объявлений
+    /**
+     * Получение всех объявлений.
+     *
+     * @return ResponseEntity с списком всех объявлений и статусом OK.
+     */
     @Operation(summary = "Получение всех объявлений", tags = {"Объявления"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content =
@@ -60,7 +64,14 @@ public class AdsController {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
-    //Добавление объявления
+    /**
+     * Добавление нового объявления.
+     *
+     * @param ad Данные объявления.
+     * @param image Изображение объявления.
+     * @return ResponseEntity с созданным объявлением и статусом CREATED, или статусом UNAUTHORIZED, если пользователь не аутентифицирован.
+     * @throws IOException если произошла ошибка при создании объявления.
+     */
     @Operation(summary = "Добавление объявления", tags = {"Объявления"})
     @PostMapping(consumes = "multipart/form-data")
     @ApiResponses(value = {
@@ -100,7 +111,13 @@ public class AdsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAd);
     }
 
-    //Получение информации об объявлении
+    /**
+     * Получение информации об объявлении по его идентификатору.
+     *
+     * @param id Идентификатор объявления.
+     * @param authentication Данные аутентификации пользователя.
+     * @return ResponseEntity с информацией об объявлении и статусом OK, или статусом UNAUTHORIZED, если пользователь не аутентифицирован, или статусом NOT_FOUND, если объявление не найдено.
+     */
     @Operation(summary = "Получение информации об объявлении", tags = {"Объявления"})
     @GetMapping(path = "/{id}")
     @ApiResponses(value = {
@@ -121,7 +138,12 @@ public class AdsController {
         }
     }
 
-    //Удаление объявления
+    /**
+     * Удаление объявления по его идентификатору.
+     *
+     * @param id Идентификатор объявления.
+     * @return ResponseEntity с статусом NO_CONTENT, если объявление успешно удалено, или статусом UNAUTHORIZED, если пользователь не аутентифицирован, или статусом FORBIDDEN, если пользователь не имеет прав на удаление, или статусом NOT_FOUND, если объявление не найдено.
+     */
     @Operation(summary = "Удаление объявления", tags = {"Объявления"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
@@ -138,7 +160,14 @@ public class AdsController {
         return ResponseEntity.ok().build();
     }
 
-    //Обновление информации об объявлении
+    /**
+     * Обновление информации об объявлении по его идентификатору.
+     *
+     * @param id Идентификатор объявления.
+     * @param newAd Новые данные объявления.
+     * @param authentication Данные аутентификации пользователя.
+     * @return ResponseEntity с обновленным объявлением и статусом OK, или статусом UNAUTHORIZED, если пользователь не аутентифицирован, или статусом FORBIDDEN, если пользователь не имеет прав на обновление, или статусом NOT_FOUND, если объявление не найдено.
+     */
     @Operation(summary = "Обновление информации в объявлении", tags = {"Объявления"})
     @PatchMapping(path = "/{id}")
     @ApiResponses(value = {
@@ -152,7 +181,7 @@ public class AdsController {
     })
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Ad> updateAd(@PathVariable int id, @RequestBody CreateOrUpdateAd newAd,
-                                      Authentication authentication) {
+                                       Authentication authentication) {
         // Получение объявления, которое необходимо обновить
         ResponseEntity<ExtendedAd> oldAdResponse = getAd(id, authentication);
 
@@ -164,8 +193,11 @@ public class AdsController {
         return ResponseEntity.ok(updatedAd);
     }
 
-
-    // Получение объявлений авторизованного пользователя
+    /**
+     * Получение объявлений авторизованного пользователя.
+     *
+     * @return ResponseEntity с списком объявлений пользователя и статусом OK, или статусом UNAUTHORIZED, если пользователь не аутентифицирован.
+     */
     @Operation(summary = "Получение объявлений авторизованного пользователя", tags = {"Объявления"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
@@ -175,10 +207,17 @@ public class AdsController {
     })
     @GetMapping("/me")
     public ResponseEntity<Ads> getUserAds() {
-            return ResponseEntity.ok().body(adsService.getMyAds());
+        return ResponseEntity.ok().body(adsService.getMyAds());
     }
 
-    // Обновление картинки объявления
+    /**
+     * Обновление изображения объявления по его идентификатору.
+     *
+     * @param id Идентификатор объявления.
+     * @param image Новое изображение объявления.
+     * @return ResponseEntity с статусом OK, если изображение успешно обновлено, или статусом UNAUTHORIZED, если пользователь не аутентифицирован, или статусом FORBIDDEN, если пользователь не имеет прав на обновление, или статусом NOT_FOUND, если объявление не найдено.
+     * @throws IOException если произошла ошибка при обновлении изображения.
+     */
     @Operation(summary = "Обновление картинки объявления", tags = {"Объявления"})
     @PatchMapping(path = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {

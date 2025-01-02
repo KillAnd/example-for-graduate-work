@@ -13,15 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.UserDTO;
-import ru.skypro.homework.exception.UserNotFoundException;
-import ru.skypro.homework.model.User;
 import ru.skypro.homework.exception.NewPasswordException;
 import ru.skypro.homework.exception.UnauthorizedException;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
-
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Контроллер для обработки запросов, связанных с пользователями.
