@@ -4,15 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.Image;
-import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
@@ -23,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static java.nio.file.Paths.get;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
@@ -46,7 +39,7 @@ public class ImageServiceImpl implements ImageService {
     private Path path;
 
     @Value("${path.to.images.folder}")
-    private String imagesDir;
+    String imagesDir;
 
     /**
      * Загружает изображение на сервер и сохраняет его в базе данных.
@@ -104,5 +97,15 @@ public class ImageServiceImpl implements ImageService {
             return fileName.substring(fileName.lastIndexOf(".") + 1);
         }
         throw new RuntimeException("Название файла не валидно");
+    }
+
+    /**
+     * Возвращает полный путь к изображению по его имени.
+     *
+     * @param name Имя изображения.
+     * @return Полный путь к изображению в формате "директория/имя_файла".
+     */
+    public String getFullPath(String name) {
+        return imagesDir + '/' + name;
     }
 }

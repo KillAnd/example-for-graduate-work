@@ -7,8 +7,6 @@ import ru.skypro.homework.model.User;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Реализация интерфейса UserDetails для предоставления информации о пользователе.

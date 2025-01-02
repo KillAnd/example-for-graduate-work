@@ -1,10 +1,8 @@
 package ru.skypro.homework.service;
 
 import ru.skypro.homework.dto.Comments;
-import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
-
-import java.util.List;
+import ru.skypro.homework.model.Comment;
 
 public interface CommentService {
 
